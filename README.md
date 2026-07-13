@@ -1,7 +1,5 @@
 <div align="center">
-  <!-- Aquí puedes poner el link a tu logo o banner -->
-  <img src="src/main/resources/images/Logo%20Logimed%20Tech%20Horizontal.png" alt="Logo Farmacia" width="400"/>
-  
+   <img width="1952" height="657" alt="Logo Logimed Tech Horizontal" src="https://github.com/user-attachments/assets/843c49cb-e82d-4917-8784-fb6efc324a5a" />
   <br/><br/>
   
   <!-- Badges / Escudos decorativos -->
