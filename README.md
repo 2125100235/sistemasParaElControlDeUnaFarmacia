@@ -2,8 +2,6 @@ Proceso para trabajar en el proyecto juntos y que suban sus cambios aquí:
 
 El 90% del tiempo en GitHub se resume en tres acciones: Pull (Bajar), Commit (Guardar localmente) y Push (Subir a la nube).
 
-Imprime o mándale esta rutina a tu equipo; deben seguir este estricto orden cada vez que se sienten a programar:
-
 1ª Acción: PULL (Actualizar antes de tocar nada) ⬇️
 Antes de escribir una sola línea de código, siempre debes ver si alguien más subió cambios mientras dormías.
 
