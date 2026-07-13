@@ -24,3 +24,13 @@ Haz clic en el botón Commit (Esto lo guarda en el historial de TU computadora, 
 En la esquina superior derecha, haz clic en la flecha verde apuntando hacia arriba (Ctrl + Shift + K), o dale al botón Push que aparece tras hacer el commit.
 
 Confirma dando clic en Push. ¡Tus cambios ya están en GitHub listos para que los demás los descarguen!
+
+¡Importante!
+Cuando dos personas editan exactamente la misma línea del mismo archivo al mismo tiempo, GitHub no sabe a quién hacerle caso y ocurre un fatal "Merge Conflict" (Conflicto de fusión). Para que no perdamos tiempo arreglando eso:
+
+Repartan las vistas: Nunca trabajen dos personas en el mismo FXML a la vez. Ejemplo, una persona se encarga hoy de productos.fxml y su controlador, y otra persona se encargaría de ventas.fxml y su controlador.
+
+Hagan Commits pequeños: No trabajen 3 días seguidos sin subir nada. Si terminaron un botón o una ventana pequeña, hagan Commit y Push. Entre más actualizados estén todos, menos choques habrá.
+
+(En caso de usar CSS)
+El CSS es zona de peligro: Como todos compartirán un mismo archivo style.css, avísense por WhatsApp: "Oigan, voy a agregar las variables de color del menú en el CSS, hagan Pull en 5 minutos".
