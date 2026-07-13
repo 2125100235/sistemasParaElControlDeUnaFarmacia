@@ -1,3 +1,16 @@
+<div align="center">
+  <!-- Aquí puedes poner el link a tu logo o banner -->
+  <img src="src/main/resources/images/Logo%20Logimed%20Tech%20Horizontal.png" alt="Logo Farmacia" width="400"/>
+  
+  <br/><br/>
+  
+  <!-- Badges / Escudos decorativos -->
+  <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" />
+  <img src="https://img.shields.io/badge/JavaFX-007396?style=for-the-badge&logo=java&logoColor=white" />
+  <img src="https://img.shields.io/badge/Scene%20Builder-4A154B?style=for-the-badge&logo=qt&logoColor=white" />
+  <img src="https://img.shields.io/badge/IntelliJ_IDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white" />
+</div>
+
 Proceso para trabajar en el proyecto juntos y que suban sus cambios aquí:
 
 El 90% del tiempo en GitHub se resume en tres acciones: Pull (Bajar), Commit (Guardar localmente) y Push (Subir a la nube).
