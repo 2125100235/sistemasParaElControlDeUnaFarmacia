@@ -19,7 +19,7 @@ public class MainApplication extends Application {
         //Importamos la fuente
         Font.loadFont(getClass().getResourceAsStream("/fonts/DMSans-VariableFont_opsz,wght.ttf"), 12);
         scene.getStylesheets().add(css);
-        stage.setTitle("Inicio");
+        stage.setTitle("Sistema para el control de la farmacia");
         stage.setScene(scene);
         stage.show();
     }

@@ -52,7 +52,7 @@
          <children>
             <ImageView fitHeight="59.0" fitWidth="249.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../../../images/Logo%20Logimed%20Tech%20Horizontal.png" />
+                  <Image url="@../../../images/Logo_LogimedTech_Horizontal.png" />
                </image>
             </ImageView>
          </children></HBox>

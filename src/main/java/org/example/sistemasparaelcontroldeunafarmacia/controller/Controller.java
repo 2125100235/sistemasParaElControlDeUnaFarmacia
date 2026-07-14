@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
@@ -28,9 +29,15 @@ public class Controller {
     @FXML
     private Button btnRegresar;
 
+    @FXML
+    private Button btnRegistro;
+
+    @FXML
+    private Hyperlink linkIniciarSesion;
+
     //Método principal para la navegación entre ventanas, se utiliza de forma universal para toda la navegación, por botón se le pasan los parámetros de la URL de la ventana hacia la que va y el evento desde el cuál fue accionado (el botón)
     @FXML
-    private void navegacion(String ruta,MouseEvent event, String titulo) {
+    private void navegacion(String ruta,MouseEvent event) {
         try{
             //Busca archivo FXML
             URL url = getClass().getResource(ruta);
@@ -45,8 +52,6 @@ public class Controller {
             //Intercambio entre ventanas
             ventanaActual.setScene(scene);
             ventanaActual.show();
-            //Cambio dinámico de los títulos de las ventanas
-            ventanaActual.setTitle(titulo);
         }
         catch(Exception e){
             System.out.println("(Error: " + e.getMessage() +")");
@@ -55,16 +60,21 @@ public class Controller {
     //Navegacion entre ventanas, se le pesan los parámetros de URL y evento al método de navegación
     @FXML
     void navPrincipal(MouseEvent event){
-        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/principal.fxml", event,"Menú Principal");
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/principal.fxml", event);
     }
 
     @FXML
     void navRegistro(MouseEvent event){
-        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/registro.fxml", event, "Registro");
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/registro.fxml", event);
     }
 
     @FXML
     void navRegresar(MouseEvent event){
-        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/inicio.fxml", event, "Inicio");
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/inicio.fxml", event);
+    }
+
+    @FXML
+    public void navInicioSesion(MouseEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/inicioSesion.fxml", event);
     }
 }
