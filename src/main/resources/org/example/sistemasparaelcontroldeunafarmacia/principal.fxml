@@ -26,8 +26,8 @@
          <right>
             <HBox alignment="CENTER" prefHeight="37.0" prefWidth="75.0" spacing="20.0" BorderPane.alignment="CENTER">
                <children>
-                  <FontAwesomeIconView glyphName="QUESTION" size="30" />
-                  <FontAwesomeIconView glyphName="USER" size="30" />
+                  <FontAwesomeIconView fx:id="btnAyuda" glyphName="QUESTION" onMouseClicked="#navAyuda" size="30" />
+                  <FontAwesomeIconView fx:id="btnusuario" glyphName="USER" onMouseClicked="#navDatosCuenta" size="30" />
                </children>
                <padding>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -40,14 +40,14 @@
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
          <children>
-            <ScrollPane fitToWidth="true" prefHeight="320.0" prefWidth="920.0">
+            <ScrollPane fitToWidth="true" prefHeight="320.0">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
                <content>
-                  <TilePane alignment="CENTER" prefHeight="200.0" prefWidth="200.0">
+                  <TilePane alignment="CENTER" style="-fx-background-color: transparent;">
                      <children>
-                        <ImageView fitHeight="304.0" fitWidth="209.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="btnProductosMenu" fitHeight="304.0" fitWidth="209.0" onMouseClicked="#navProductosMenu" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../../images/imgProductos.png" />
                            </image>
@@ -55,17 +55,17 @@
                               <Rectangle2D />
                            </viewport>
                         </ImageView>
-                        <ImageView fitHeight="304.0" fitWidth="209.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="btnClientesMenu" fitHeight="304.0" fitWidth="209.0" onMouseClicked="#navClientesMenu" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../../images/imgClientes.png" />
                            </image>
                         </ImageView>
-                        <ImageView fitHeight="304.0" fitWidth="209.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="btnVentasMenu" fitHeight="304.0" fitWidth="209.0" onMouseClicked="#navVentasMenu" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../../images/imgVentas.png" />
                            </image>
                         </ImageView>
-                        <ImageView fitHeight="304.0" fitWidth="209.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="btnRegistroMenu" fitHeight="304.0" fitWidth="209.0" onMouseClicked="#navRegistroMenu" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../../images/imgRegistro.png" />
                            </image>

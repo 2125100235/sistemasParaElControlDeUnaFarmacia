@@ -1,5 +1,6 @@
 package org.example.sistemasparaelcontroldeunafarmacia.controller;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -9,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
@@ -37,6 +39,24 @@ public class Controller {
 
     @FXML
     private Button btnIngreso;
+
+    @FXML
+    private FontAwesomeIconView btnAyuda;
+
+    @FXML
+    private ImageView btnClientesMenu;
+
+    @FXML
+    private ImageView btnProductosMenu;
+
+    @FXML
+    private ImageView btnRegistroMenu;
+
+    @FXML
+    private ImageView btnVentasMenu;
+
+    @FXML
+    private FontAwesomeIconView btnusuario;
 
  ;;;   //Método principal para la navegación entre ventanas, se utiliza de forma universal para toda la navegación, por botón se le pasan los parámetros de la URL de la ventana hacia la que va y el evento desde el cuál fue accionado (el botón)
     @FXML
@@ -79,5 +99,35 @@ public class Controller {
     @FXML
     public void navInicioSesion(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/inicioSesion.fxml", event);
+    }
+
+    @FXML
+    public void navClientesMenu(MouseEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/clientesMenu.fxml", event);
+    }
+
+    @FXML
+    public void navDatosCuenta(MouseEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/datosCuenta.fxml", event);
+    }
+
+    @FXML
+    void navProductosMenu(MouseEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/productosMenu.fxml", event);
+    }
+
+    @FXML
+    void navRegistroMenu(MouseEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/registroMenu.fxml", event);
+    }
+
+    @FXML
+    void navVentasMenu(MouseEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/ventasMenu.fxml", event);
+    }
+
+    @FXML
+    void navAyuda(MouseEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/ayuda.fxml", event);
     }
 }
