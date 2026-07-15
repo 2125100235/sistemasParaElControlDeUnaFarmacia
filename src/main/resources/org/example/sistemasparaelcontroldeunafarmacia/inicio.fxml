@@ -30,7 +30,7 @@
       </HBox>
       <VBox alignment="CENTER" prefHeight="350.0" prefWidth="960.0" spacing="20.0">
          <children>
-            <Button fx:id="btnIniciarSesion" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#navPrincipal" prefHeight="71.0" prefWidth="266.0" style="-fx-border-radius: 30;" text="INICIAR SESIÓN" textAlignment="CENTER">
+            <Button fx:id="btnIniciarSesion" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#navInicioSesion" prefHeight="71.0" prefWidth="266.0" style="-fx-border-radius: 30;" text="INICIAR SESIÓN" textAlignment="CENTER">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>

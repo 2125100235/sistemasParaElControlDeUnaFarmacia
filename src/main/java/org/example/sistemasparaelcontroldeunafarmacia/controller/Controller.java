@@ -35,7 +35,10 @@ public class Controller {
     @FXML
     private Hyperlink linkIniciarSesion;
 
-    //Método principal para la navegación entre ventanas, se utiliza de forma universal para toda la navegación, por botón se le pasan los parámetros de la URL de la ventana hacia la que va y el evento desde el cuál fue accionado (el botón)
+    @FXML
+    private Button btnIngreso;
+
+ ;;;   //Método principal para la navegación entre ventanas, se utiliza de forma universal para toda la navegación, por botón se le pasan los parámetros de la URL de la ventana hacia la que va y el evento desde el cuál fue accionado (el botón)
     @FXML
     private void navegacion(String ruta,MouseEvent event) {
         try{
