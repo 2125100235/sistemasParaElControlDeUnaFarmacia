@@ -1,21 +1,25 @@
 package org.example.sistemasparaelcontroldeunafarmacia.controller;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import org.example.sistemasparaelcontroldeunafarmacia.dao.ProductoDAO;
+import org.example.sistemasparaelcontroldeunafarmacia.model.Producto;
 
 import java.net.URL;
-import java.util.Objects;
+import java.text.SimpleDateFormat;
 
 public class Controller {
 
@@ -58,7 +62,193 @@ public class Controller {
     @FXML
     private FontAwesomeIconView btnusuario;
 
- ;;;   //Método principal para la navegación entre ventanas, se utiliza de forma universal para toda la navegación, por botón se le pasan los parámetros de la URL de la ventana hacia la que va y el evento desde el cuál fue accionado (el botón)
+    @FXML
+    private Button btnActualizarProducto;
+
+    @FXML
+    private Button btnEliminarProducto;
+
+    @FXML
+    private Button btnNuevoProducto;
+
+    @FXML
+    private Button btnProductosRegresarPrincipal;
+
+    @FXML
+    private TableView<?> tablaProductos;
+
+    @FXML
+    private TableColumn<?, ?> colCaducidad;
+
+    @FXML
+    private TableColumn<?, ?> colCodigo;
+
+    @FXML
+    private TableColumn<?, ?> colExistencia;
+
+    @FXML
+    private TableColumn<?, ?> colNombre;
+
+    @FXML
+    private TableColumn<?, ?> colPrecio;
+    //Acciones en BD
+    private ProductoDAO productoDAO;
+    private Producto productoSeleccionado;
+    private ObservableList<Producto> listaProductos;
+
+ //Método principal para la navegación entre ventanas, se utiliza de forma universal para toda la navegación, por botón se le pasan los parámetros de la URL de la ventana hacia la que va y el evento desde el cuál fue accionado (el botón)
+
+    @FXML
+    public void initialize(){
+        productoDAO= new ProductoDAO();
+        configurarTabla();
+        cargarProductos();
+        tablaProductos
+                .getSelectionModel()
+                .selectedItemProperty()
+                .addListener(
+                        (observable, anterior, seleccionado) -> {
+                            if(seleccionado != null){
+                                productoSeleccionado = seleccionado;
+                                mostrarProductoSeleccionado();
+                            }
+                        }
+                );
+    }
+    private void mostrarProductoSeleccionado(){
+        txtNombre.setText(
+                productoSeleccionado.getNombre()
+        );
+        txtCantidad.setText(
+                productoSeleccionado.getCantidad()
+        );
+        txtPrecioVenta.setText(
+                String.valueOf(
+                        productoSeleccionado.getPrecioVenta()
+                )
+        );
+
+        txtFechaCaducidad.setText(
+                productoSeleccionado.getFechacaducidad()
+        );
+    }
+    @FXML
+    public void onActualizarClick(){
+        if(productoSeleccionado == null){
+            lblResultado.setText(
+                    "Seleccione un producto"
+            );
+            return;
+        }
+        productoSeleccionado.setNombre(
+                txtNombre.getText()
+        );
+        productoSeleccionado.setCantidad(
+                Integer.parseInt(
+                        txtCantidad.getText();
+                )
+        )
+        productoSeleccionado.setPrecioVenta(
+                Integer.parseInt(
+                        txtPrecioVenta.getText()
+                )
+        );
+        productoSeleccionado.setFechacaducidad(
+                txtFechaCaducidad.getText()
+        );
+
+        productoDAO.actualizar(
+                productoSeleccionado
+        );
+        lblResultado.setText(
+                "Producto actualizado"
+        );
+        cargarProductos();
+        limpiar();
+    }
+    @FXML
+    public void onEliminarClick(){
+        if(productoSeleccionado == null){
+            lblResultado.setText(
+                    "Seleccione un producto"
+            );
+            return;
+
+        }
+        Alert alerta =
+                new Alert(
+                        Alert.AlertType.CONFIRMATION
+                );
+        alerta.setTitle(
+                "Eliminar producto"
+        );
+        alerta.setHeaderText(null);
+        alerta.setContentText(
+                "¿Desea eliminar este producto?"
+        );
+        if(
+                alerta.showAndWait()
+                        .get()
+                        ==
+                        ButtonType.OK
+        ){
+            productoDAO.eliminar(
+                    productoSeleccionado.getCodigo()
+            );
+            lblResultado.setText(
+                    "Producto eliminado"
+            );
+            cargarProductos();
+            limpiar();
+        }
+    }
+    private void configurarTabla(){
+        colCodigo.setCellValueFactory(
+                dato ->
+                        new SimpleIntegerProperty(
+                                dato.getValue().getCodigo()
+                        ).asObject()
+        );
+        colNombre.setCellValueFactory(
+                dato ->
+                        new SimpleStringProperty(
+                                dato.getValue().getNombre()
+                        )
+        );
+
+        colCantidad.setCellValueFactory(
+                dato ->
+                        new SimpleIntegerProperty(
+                                dato.getValue().getCantidad()
+                        ).asObject()
+        );
+        colExistencia.setCellValueFactory(
+                dato ->
+                        new SimpleIntegerProperty(
+                                dato.getValue().getExistencia()
+                        )
+        );
+        colPrecio.setCellValueFactory(
+                dato ->
+                new SimpleFloatProperty(
+                        dato.getValue.getPrecio()
+                )
+        );
+        colCaducidad.setCellValueFactory(
+                dato ->
+                        new SimpleDateFormat(
+                                dato.getValue().getFechaCaducidad
+                        )
+        );
+    }
+    private void cargarProductos(){
+        listaProductos =
+                FXCollections.observableArrayList(
+                        productoDAO.listar()
+                );
+        tablaProductos.setItems(listaProductos);
+    }
+
     @FXML
     private void navegacion(String ruta,MouseEvent event) {
         try{
@@ -92,8 +282,8 @@ public class Controller {
     }
 
     @FXML
-    void navRegresar(MouseEvent event){
-        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/inicio.fxml", event);
+    void navRegresarPrincipal(MouseEvent event){
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/principal.fxml", event);
     }
 
     @FXML
