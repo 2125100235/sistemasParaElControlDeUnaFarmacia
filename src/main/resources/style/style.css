@@ -1,1 +1,21 @@
-
+.contenedorBuscador
+{
+    -fx-background-color: white;
+    -fx-border-color: #DCDCDC;
+    -fx-border-width: 1;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-padding: 2;
+    -fx-alignment: center;
+}
+.campoBuscador
+{
+    -fx-background-color: transparent; /* Fondo transparente para ver el del HBox */
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-width: 0; /* Quitamos su borde nativo */
+    -fx-border-color: transparent;
+    -fx-prompt-text-fill: #A0A0A0; /* Color gris suave para el "Buscar..." */
+    -fx-font-size: 14px;
+    -fx-padding: 5 10 5 10; /* Espaciado interno del texto (arriba der abajo izq) */
+}

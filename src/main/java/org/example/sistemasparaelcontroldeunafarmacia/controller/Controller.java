@@ -1,10 +1,6 @@
 package org.example.sistemasparaelcontroldeunafarmacia.controller;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import javafx.beans.property.SimpleFloatProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,7 +15,6 @@ import org.example.sistemasparaelcontroldeunafarmacia.dao.ProductoDAO;
 import org.example.sistemasparaelcontroldeunafarmacia.model.Producto;
 
 import java.net.URL;
-import java.text.SimpleDateFormat;
 
 public class Controller {
 
@@ -62,6 +57,7 @@ public class Controller {
     @FXML
     private FontAwesomeIconView btnusuario;
 
+    //ProductosMenu
     @FXML
     private Button btnActualizarProducto;
 
@@ -91,13 +87,24 @@ public class Controller {
 
     @FXML
     private TableColumn<?, ?> colPrecio;
+
+    @FXML
+    private Button btnNuevoProductoRegresarProductos;
+    @FXML
+    private TableView<?> tablaAbastecimiento;
+
+    //ClientesMenu
+    @FXML
+    private Button btnNuevoCliente;
+    @FXML
+    private Button btnNuevoClienteRegresarClientes;
     //Acciones en BD
     private ProductoDAO productoDAO;
     private Producto productoSeleccionado;
     private ObservableList<Producto> listaProductos;
 
  //Método principal para la navegación entre ventanas, se utiliza de forma universal para toda la navegación, por botón se le pasan los parámetros de la URL de la ventana hacia la que va y el evento desde el cuál fue accionado (el botón)
-
+    /*
     @FXML
     public void initialize(){
         productoDAO= new ProductoDAO();
@@ -248,7 +255,7 @@ public class Controller {
                 );
         tablaProductos.setItems(listaProductos);
     }
-
+    */
     @FXML
     private void navegacion(String ruta,MouseEvent event) {
         try{
@@ -313,11 +320,38 @@ public class Controller {
 
     @FXML
     void navVentasMenu(MouseEvent event) {
-        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/ventasMenu.fxml", event);
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/ventasDiaMenu.fxml", event);
+    }
+
+    @FXML
+    void navVentasMesMenu(MouseEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/ventasMesMenu.fxml", event);
+    }
+
+    @FXML
+    void navVentasSemanaMenu(MouseEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/ventasSemanaMenu.fxml", event);
     }
 
     @FXML
     void navAyuda(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/ayuda.fxml", event);
+    }
+    @FXML
+    void navNuevoProducto(MouseEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/nuevoProducto.fxml", event);
+    }
+    @FXML
+    void navRegresarProductosMenu(MouseEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/productosMenu.fxml", event);
+    }
+
+    @FXML
+    void navNuevoCliente(MouseEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/nuevoCliente.fxml", event);
+    }
+    @FXML
+    void navRegresarClientesMenu(MouseEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/clientesMenu.fxml", event);
     }
 }
