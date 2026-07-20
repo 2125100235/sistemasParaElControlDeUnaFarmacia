@@ -1,90 +1,167 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.DropShadow?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
    <children>
-      <AnchorPane layoutX="73.0" layoutY="160.0" prefHeight="317.0" prefWidth="842.0" style="-fx-background-color: #E0E0E0;; -fx-background-radius: 25;;">
-         <effect>
-            <DropShadow />
-         </effect>
+      <HBox alignment="CENTER" prefHeight="99.0" prefWidth="960.0" spacing="20.0">
          <children>
-            <GridPane hgap="20.0" layoutX="43.0" layoutY="59.0" prefHeight="212.0" prefWidth="754.0" vgap="30.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
+            <Label fx:id="lblTitulo" alignment="CENTER" text="Datos de la cuenta" textOverrun="CLIP">
+               <font>
+                  <Font name="System Bold" size="35.0" />
+               </font>
+            </Label>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </HBox>
+      <VBox alignment="CENTER" prefHeight="624.0" prefWidth="960.0" spacing="20.0" style="-fx-background-color: #e8e8e8; -fx-background-radius: 30px; -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.15), 10, 0, 0, 4);">
+         <padding>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+         </padding>
+         <children>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label minWidth="-Infinity" text="(Permite que tu administrador llene el siguiente formulario)" />
+                  <Region minWidth="0.0" prefHeight="25.0" prefWidth="447.0" HBox.hgrow="ALWAYS" />
+                  <Button minWidth="-Infinity" mnemonicParsing="false" text="Editar" />
+                  <Button minWidth="-Infinity" mnemonicParsing="false" text="Aplicar" />
+               </children>
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
+            </HBox>
+            <GridPane prefHeight="457.0" prefWidth="920.0" style="-fx-background-color: #e8e8e8;">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
                <children>
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <Label text="Nombres" />
-                        <TextField />
+                        <Label text="Nombre(s)">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField prefHeight="59.0" prefWidth="415.0" />
                      </children>
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
                   </VBox>
                   <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
                      <children>
-                        <Label text="Apellido Paterno" />
-                        <TextField />
+                        <Label text="Apellido paterno">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField prefHeight="67.0" prefWidth="445.0" />
                      </children>
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
                   </VBox>
                   <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="2">
                      <children>
-                        <Label text="Apellido Materno" />
-                        <TextField />
+                        <Label text="Apellido materno">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField prefHeight="90.0" prefWidth="445.0" />
                      </children>
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
                   </VBox>
                   <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
                      <children>
-                        <Label text="Contraseña" />
-                        <TextField promptText="Ingresa tu contraseña para ver " />
+                        <Label text="Contraseña">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField prefHeight="83.0" prefWidth="445.0" promptText="Ingresa tu contraseña para ver" />
                      </children>
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
                   </VBox>
                   <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
-                        <Label text="Correo Electrónico" />
-                        <TextField />
+                        <Label text="Correo electrónico">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField prefHeight="87.0" prefWidth="445.0" />
                      </children>
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
                   </VBox>
                   <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <children>
-                        <Label text="Teléfono" />
-                        <TextField />
+                        <Label text="Teléfono">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField prefHeight="106.0" prefWidth="445.0" />
                      </children>
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
                   </VBox>
                </children>
+               <padding>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </padding>
             </GridPane>
-            <Label layoutX="33.0" layoutY="14.0" text="(Permite que tu administrador llene el siguiente formulario)" />
-            <Button layoutX="637.0" layoutY="10.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="67.0" style="-fx-background-color: white; -fx-background-radius: 3; -fx-border-color: black; -fx-border-radius: 3;" text="Editar" />
-            <Button layoutX="711.0" layoutY="10.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="67.0" style="-fx-background-color: white; -fx-background-radius: 3; -fx-border-color: black; -fx-border-radius: 3;" text="Aplicar" />
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Button mnemonicParsing="false" text="Menú principal" />
+                  <Button mnemonicParsing="false" text="Cerrar sesión" />
+                  <Button mnemonicParsing="false" text="Eliminar cuenta" />
+               </children>
+            </HBox>
          </children>
-      </AnchorPane>
-      <Button layoutX="87.0" layoutY="533.0" mnemonicParsing="false" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: black; -fx-border-radius: 10;" text="Menú principal" />
-      <Button layoutX="215.0" layoutY="533.0" mnemonicParsing="false" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: black; -fx-border-radius: 10;" text="Cerrar Sesión" />
-      <Button layoutX="334.0" layoutY="532.0" mnemonicParsing="false" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: black; -fx-border-radius: 10;" text="Eliminar Cuenta" />
-      <Label layoutX="313.0" layoutY="40.0" text="Datos de la Cuenta">
-         <font>
-            <Font name="System Bold" size="44.0" />
-         </font>
-      </Label>
-      <Label layoutX="860.0" layoutY="551.0" text="By LogiMed Tech">
-         <font>
-            <Font name="System Bold" size="12.0" />
-         </font>
-      </Label>
+      </VBox>
+      <HBox alignment="BOTTOM_RIGHT" prefHeight="108.0" prefWidth="960.0">
+         <children>
+            <ImageView fitHeight="59.0" fitWidth="149.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../images/Logo_LogimedTech_Horizontal.png" />
+               </image>
+            </ImageView>
+         </children>
+         <VBox.margin>
+            <Insets top="5.0" />
+         </VBox.margin>
+      </HBox>
+      <VBox prefHeight="200.0" prefWidth="100.0" />
    </children>
-</AnchorPane>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>
