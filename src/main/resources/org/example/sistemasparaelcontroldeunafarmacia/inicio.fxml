@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom, #ffffff 40%, #e0e0e0 90%);" stylesheets="@../../../style/style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
    <children>
       <Label text="Farmacia">
          <font>
@@ -30,17 +30,17 @@
       </HBox>
       <VBox alignment="CENTER" prefHeight="350.0" prefWidth="960.0" spacing="20.0">
          <children>
-            <Button fx:id="btnIniciarSesion" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#navInicioSesion" prefHeight="71.0" prefWidth="266.0" style="-fx-border-radius: 30;" text="INICIAR SESIÓN" textAlignment="CENTER">
+            <Button fx:id="btnIniciarSesion" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#navInicioSesion" prefHeight="71.0" prefWidth="266.0" styleClass="botonNormalGrande" text="INICIAR SESIÓN" textAlignment="CENTER">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
                <font>
-                  <Font size="28.0" />
+                  <Font size="10.0" />
                </font>
             </Button>
-            <Button fx:id="btnRegistrarse" mnemonicParsing="false" onMouseClicked="#navRegistro" prefHeight="71.0" prefWidth="266.0" text="REGISTRARSE">
+            <Button fx:id="btnRegistrarse" mnemonicParsing="false" onMouseClicked="#navRegistro" prefHeight="71.0" prefWidth="266.0" styleClass="botonAzulGrande" text="REGISTRARSE" textAlignment="CENTER">
                <font>
-                  <Font size="28.0" />
+                  <Font size="10.0" />
                </font>
             </Button>
          </children>

@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" stylesheets="@../../../style/style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom, #ffffff 40%, #e0e0e0 90%);" stylesheets="@../../../style/style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
    <children>
       <Label text="Farmacia">
          <font>
@@ -69,15 +69,15 @@
             </TableView>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Button fx:id="btnVentasSemanaMenu" mnemonicParsing="false" onMouseClicked="#navVentasSemanaMenu" text="Semana" />
-                  <Button fx:id="btnVentasDiaMenu" mnemonicParsing="false" onMouseClicked="#navVentasMenu" text="Día" />
+                  <Button fx:id="btnVentasSemanaMenu" mnemonicParsing="false" onMouseClicked="#navVentasSemanaMenu" styleClass="botonNormal" text="Semana" />
+                  <Button fx:id="btnVentasDiaMenu" mnemonicParsing="false" onMouseClicked="#navVentasMenu" styleClass="botonNormal" text="Día" />
                </children>
             </HBox>
          </children>
       </VBox>
       <HBox prefHeight="28.0" prefWidth="911.0">
          <children>
-            <Button fx:id="btnProductosRegresarPrincipal" mnemonicParsing="false" onMouseClicked="#navRegresarPrincipal" style="-fx-background-color: white; -fx-border-color: black;;" text="Regresar al menú principal" textAlignment="CENTER" />
+            <Button fx:id="btnProductosRegresarPrincipal" mnemonicParsing="false" onMouseClicked="#navRegresarPrincipal" style="-fx-background-color: white; -fx-border-color: black;;" styleClass="botonNormal" text="Menú principal" textAlignment="CENTER" />
          </children>
       </HBox>
       <HBox alignment="BOTTOM_RIGHT" prefHeight="108.0" prefWidth="960.0">

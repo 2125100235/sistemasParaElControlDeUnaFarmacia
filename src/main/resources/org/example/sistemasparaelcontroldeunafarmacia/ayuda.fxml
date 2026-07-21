@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-<?import javafx.scene.text.TextFlow?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" stylesheets="@../../../style/style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom, #ffffff 40%, #e0e0e0 90%);" stylesheets="@../../../style/style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
    <children>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
          <children>
             <Label fx:id="lblTitulo" alignment="CENTER" prefHeight="54.0" prefWidth="168.0" text="Ayuda" textOverrun="CLIP">
                <font>
-                  <Font name="System Bold" size="49.0" />
+                  <Font name="System Bold" size="29.0" />
                </font>
             </Label>
          </children>
@@ -27,103 +25,113 @@
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
       </HBox>
-      <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT">
+      <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="389.0" prefWidth="960.0">
          <children>
-            <GridPane alignment="CENTER" prefHeight="364.0" prefWidth="984.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="100.0">
                <children>
-                  <TextFlow prefHeight="63.0" prefWidth="480.0" textAlignment="JUSTIFY" GridPane.columnIndex="1">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="En el menú principal ingresa en la opción “Registro”, y ahí puedes registrar cualquier venta." wrappingWidth="475.7392578125">
-                           <font>
-                              <Font size="22.0" />
-                           </font>
-                        </Text>
-                     </children>
-                  </TextFlow>
-                  <TextFlow prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Dentro de la tabla de Productos Registrados, toca el símbolo de basura a lado del producto erróneo.">
-                           <font>
-                              <Font size="22.0" />
-                           </font>
-                        </Text>
-                     </children>
-                  </TextFlow>
-                  <TextFlow prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="En el menú principal ingresa a la opción “Ventas” y después puedes ver todas las ventas con los dos botones azules en la parte inferior izquierda.">
-                           <font>
-                              <Font size="21.0" />
-                           </font>
-                        </Text>
-                     </children>
-                  </TextFlow>
-                  <TextFlow prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="En el apartado de “productos” en el menú principal, hay una tabla con toda la información de los productos. Uno de esos apartados es “Fecha de Caducidad”.">
-                           <font>
-                              <Font size="19.0" />
-                           </font>
-                        </Text>
-                     </children>
-                  </TextFlow>
-                  <TextFlow prefHeight="200.0" prefWidth="200.0">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="¿Cómo puedo registrar una venta?">
-                           <font>
-                              <Font size="24.0" />
-                           </font>
-                        </Text>
-                     </children>
-                  </TextFlow>
-                  <TextFlow prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="¿Qué hacer si registré un producto erróneo en una venta?">
-                           <font>
-                              <Font size="24.0" />
-                           </font>
-                        </Text>
-                     </children>
-                  </TextFlow>
-                  <TextFlow prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="¿Cómo ver las ventas por semana?">
-                           <font>
-                              <Font size="24.0" />
-                           </font>
-                        </Text>
-                     </children>
-                  </TextFlow>
-                  <TextFlow prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="¿Cómo puedo ver qué medicinas caducarán?">
-                           <font>
-                              <Font size="24.0" />
-                           </font>
-                        </Text>
-                     </children>
-                  </TextFlow>
+                  <Label prefHeight="86.0" prefWidth="338.0" style="-fx-border-color: black; -fx-border-radius: 5px; -fx-background-color: white; -fx-background-radius: 5px; -fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);" text="¿Cómo puedo registrar una venta?" textAlignment="JUSTIFY" wrapText="true">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Label prefHeight="87.0" prefWidth="554.0" style="-fx-border-color: black; -fx-border-radius: 5px; -fx-background-color: white; -fx-background-radius: 5px; -fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);" text="En el menú principal ingresa en la opción “Registro”, y ahí puedes registrar cualquier venta." textAlignment="JUSTIFY" wrapText="true">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
                </children>
-            </GridPane>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="100.0">
+               <children>
+                  <Label prefHeight="91.0" prefWidth="361.0" style="-fx-border-color: black; -fx-border-radius: 5px; -fx-background-color: white; -fx-background-radius: 5px; -fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);" text="¿Qué hacer si registré un producto erróneo en una venta?" textAlignment="JUSTIFY" wrapText="true">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Label prefHeight="87.0" prefWidth="579.0" style="-fx-border-color: black; -fx-border-radius: 5px; -fx-background-color: white; -fx-background-radius: 5px; -fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);" text="Dentro de la tabla de Productos Registrados, toca el símbolo de basura a lado del producto erróneo." textAlignment="JUSTIFY" wrapText="true">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="100.0">
+               <children>
+                  <Label prefHeight="91.0" prefWidth="361.0" style="-fx-border-color: black; -fx-border-radius: 5px; -fx-background-radius: 5px; -fx-background-color: white; -fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);" text="¿Cómo ver las ventas por semana?" textAlignment="JUSTIFY" wrapText="true">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Label prefHeight="87.0" prefWidth="581.0" style="-fx-border-color: black; -fx-border-radius: 5px; -fx-background-color: white; -fx-background-radius: 5px; -fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);" text="En el menú principal ingresa a la opción “Ventas” y después puedes ver todas las ventas con los dos botones azules en la parte inferior izquierda." textAlignment="JUSTIFY" wrapText="true">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="100.0">
+               <children>
+                  <Label prefHeight="91.0" prefWidth="361.0" style="-fx-border-color: black; -fx-border-radius: 5px; -fx-background-radius: 5px; -fx-background-color: white; -fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);" text="¿Cómo puedo ver qué medicinas caducarán?" textAlignment="JUSTIFY" wrapText="true">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Label prefHeight="87.0" prefWidth="581.0" style="-fx-border-color: black; -fx-border-radius: 5px; -fx-background-color: white; -fx-background-radius: 5px; -fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);" text="En el apartado de “productos” en el menú principal, hay una tabla con toda la información de los productos. Uno de esos apartados es “Fecha de Caducidad”." textAlignment="JUSTIFY" wrapText="true">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
          </children>
       </VBox>
-      <HBox alignment="BOTTOM_RIGHT" prefHeight="108.0" prefWidth="960.0">
+      <HBox alignment="BOTTOM_RIGHT" prefHeight="89.0" prefWidth="960.0">
          <children>
-            <ImageView fitHeight="59.0" fitWidth="249.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../images/Logo_LogimedTech_Horizontal.png" />
-               </image>
-            </ImageView>
+            <VBox alignment="CENTER_LEFT" prefHeight="131.0" prefWidth="263.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" prefHeight="20.0" prefWidth="367.0" spacing="20.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <FontAwesomeIconView glyphName="PHONE" size="25" />
+                        <Label minWidth="-Infinity" prefHeight="31.0" prefWidth="227.0" text="33 1122 3344">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <FontAwesomeIconView glyphName="ENVELOPE" size="25" />
+                        <Label minWidth="-Infinity" prefHeight="31.0" prefWidth="257.0" text="logimedtech@gmail.com" textAlignment="CENTER">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </VBox>
+            <Region prefHeight="85.0" prefWidth="417.0" HBox.hgrow="ALWAYS" />
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0">
+               <children>
+                  <Button fx:id="btnProductosRegresarPrincipal" mnemonicParsing="false" onMouseClicked="#navRegresarPrincipal" prefHeight="39.0" prefWidth="153.0" styleClass="botonNormal" stylesheets="@../../../style/style.css" text="Menú principal" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Button>
+                  <ImageView fitHeight="59.0" fitWidth="249.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../images/Logo_LogimedTech_Horizontal.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </VBox>
          </children>
       </HBox>
    </children>

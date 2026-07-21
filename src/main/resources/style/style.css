@@ -19,3 +19,72 @@
     -fx-font-size: 14px;
     -fx-padding: 5 10 5 10; /* Espaciado interno del texto (arriba der abajo izq) */
 }
+/* Botones */
+.botonNormal
+{
+    -fx-background-color: white;
+    -fx-border-radius: 30px;
+    -fx-font-size: 12px;
+    -fx-border-color: black;
+    -fx-background-radius: 25px;
+    -fx-font-weight: bold;
+}
+.botonNormal:hover {
+    -fx-background-color: #f2f2f2;
+    -fx-cursor: hand;
+}
+.botonAzul
+{
+    -fx-background-color: #7c9fcd;
+    -fx-border-radius: 30px;
+    -fx-font-size: 12px;
+    -fx-background-radius: 25px;
+    -fx-font-weight: bold;
+}
+.botonAzul:hover {
+    -fx-background-color: #6281b3;
+    -fx-cursor: hand;
+}
+.botonNormalGrande
+{
+    -fx-background-color: white;
+    -fx-border-radius: 30px;
+    -fx-font-size: 21px;
+    -fx-border-color: black;
+    -fx-background-radius: 25px;
+    -fx-font-weight: bold;
+}
+.botonNormalGrande:hover {
+    -fx-background-color: #f2f2f2;
+    -fx-cursor: hand;
+}
+.botonAzulGrande
+{
+    -fx-background-color: #7c9fcd;
+    -fx-border-radius: 30px;
+    -fx-font-size: 21px;
+    -fx-background-radius: 25px;
+    -fx-font-weight: bold;
+}
+.botonAzulGrande:hover {
+    -fx-background-color: #6281b3;
+    -fx-cursor: hand;
+}
+/* Grid Panes */
+.gridPanes
+{
+    -fx-background-color: #e8e8e8;
+    -fx-background-radius: 30px;
+}
+/* Menú principal */
+.scroll-pane > .scroll-bar:vertical {
+    -fx-pref-width: 0;
+    -fx-padding: 0;
+    -fx-opacity: 0;
+}
+.scroll-pane > .scroll-bar:vertical > .track,
+.scroll-pane > .scroll-bar:vertical > .thumb,
+.scroll-pane > .scroll-bar:vertical > .decrement-button,
+.scroll-pane > .scroll-bar:vertical > .increment-button {
+    -fx-padding: 0;
+}

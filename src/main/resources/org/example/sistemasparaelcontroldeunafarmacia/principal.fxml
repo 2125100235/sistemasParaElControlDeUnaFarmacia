@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom, #ffffff 40%, #e0e0e0 90%);" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
    <children>
       <BorderPane prefHeight="74.0" prefWidth="960.0">
          <left>
@@ -40,35 +40,47 @@
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
          <children>
-            <ScrollPane fitToWidth="true" prefHeight="320.0">
+            <ScrollPane fitToWidth="true" prefHeight="320.0" stylesheets="@../../../style/style.css">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
                <content>
-                  <TilePane alignment="CENTER" style="-fx-background-color: transparent;">
+                  <TilePane alignment="CENTER" style="-fx-background-color: transparent; -fx-border-color: transparent;">
                      <children>
-                        <ImageView fx:id="btnProductosMenu" fitHeight="304.0" fitWidth="209.0" onMouseClicked="#navProductosMenu" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="btnProductosMenu" fitHeight="277.0" fitWidth="185.0" onMouseClicked="#navProductosMenu" pickOnBounds="true" preserveRatio="true" style="-fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);">
                            <image>
                               <Image url="@../../../images/imgProductos.png" />
                            </image>
                            <viewport>
                               <Rectangle2D />
                            </viewport>
+                           <TilePane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </TilePane.margin>
                         </ImageView>
-                        <ImageView fx:id="btnClientesMenu" fitHeight="304.0" fitWidth="209.0" onMouseClicked="#navClientesMenu" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="btnClientesMenu" fitHeight="277.0" fitWidth="185.0" onMouseClicked="#navClientesMenu" pickOnBounds="true" preserveRatio="true" style="-fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);">
                            <image>
                               <Image url="@../../../images/imgClientes.png" />
                            </image>
+                           <TilePane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </TilePane.margin>
                         </ImageView>
-                        <ImageView fx:id="btnVentasMenu" fitHeight="304.0" fitWidth="209.0" onMouseClicked="#navVentasMenu" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="btnVentasMenu" fitHeight="277.0" fitWidth="185.0" onMouseClicked="#navVentasMenu" pickOnBounds="true" preserveRatio="true" style="-fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);">
                            <image>
                               <Image url="@../../../images/imgVentas.png" />
                            </image>
+                           <TilePane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </TilePane.margin>
                         </ImageView>
-                        <ImageView fx:id="btnRegistroMenu" fitHeight="304.0" fitWidth="209.0" onMouseClicked="#navRegistroMenu" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="btnRegistroMenu" fitHeight="277.0" fitWidth="185.0" onMouseClicked="#navRegistroMenu" pickOnBounds="true" preserveRatio="true" style="-fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);">
                            <image>
                               <Image url="@../../../images/imgRegistro.png" />
                            </image>
+                           <TilePane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </TilePane.margin>
                         </ImageView>
                      </children>
                      <padding>

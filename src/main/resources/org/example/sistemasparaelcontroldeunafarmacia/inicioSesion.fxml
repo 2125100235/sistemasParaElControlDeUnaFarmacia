@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom, #ffffff 40%, #e0e0e0 90%);" stylesheets="@../../../style/style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
    <children>
       <Label text="Farmacia">
          <font>
@@ -39,7 +39,7 @@
                   </Label>
                </children>
             </VBox>
-            <GridPane prefHeight="323.0" prefWidth="600.0" style="-fx-background-color: #e8e8e8;">
+            <GridPane prefHeight="323.0" prefWidth="600.0" styleClass="gridPanes">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                </columnConstraints>
@@ -78,7 +78,7 @@
                <children>
                   <VBox alignment="CENTER" prefHeight="75.0" prefWidth="141.0">
                      <children>
-                        <Button fx:id="btnIngreso" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#navPrincipal" prefHeight="39.0" prefWidth="119.0" text="Ingresar" textAlignment="CENTER">
+                        <Button fx:id="btnIngreso" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#navPrincipal" prefHeight="39.0" prefWidth="119.0" styleClass="botonNormal" text="Ingresar" textAlignment="CENTER">
                            <font>
                               <Font size="16.0" />
                            </font>
