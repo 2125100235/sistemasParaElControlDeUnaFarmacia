@@ -1,0 +1,77 @@
+#Creamos y ponemos en uso la base de datos en la farmacia
+create database farmacia;
+use farmacia;
+
+#Tabla de artículos
+create table producto(
+codigo int auto_increment not null,
+nombre varchar(150) not null,
+existencia int not null,
+precioVenta decimal(10,2) not null,
+fechaCaducidad date not null,
+primary key (codigo)
+);
+
+#Tabla de clientes
+create table cliente(
+codigo int auto_increment not null,
+nombre varchar(150) not null,
+telefono varchar(10),
+rfc varchar(13),
+direccion varchar(255) not null,
+primary key (codigo)
+);
+
+#Tabla de empleados
+create table empleado(
+idEmpleado int auto_increment not null,
+nombre varchar(50) not null,
+apellidoPaterno varchar(50) not null,
+apellidoMaterno varchar(50) not null,
+clave varchar(255) not null,
+correo varchar(100) not null unique,
+telefono varchar(10),
+puesto varchar(50) not null,
+primary key (idEmpleado)
+);
+
+#Tabla de ventas
+create table venta (
+    numeroNota int auto_increment not null,
+    fecha datetime not null default current_timestamp,
+    totalpagar decimal(10,2) not null default 0.00,
+    codigoCliente int not null,
+    idEmpleado int not null,
+    primary key (numeronota),
+    foreign key (codigoCliente) references cliente(codigo),
+    foreign key (idEmpleado) references empleado(idEmpleado)
+);
+#Tabla de detalle de la venta
+create table contiene (
+    numeroNota int not null,
+    codigoProducto int not null,
+    cantidadsalida int not null,
+    precioventa decimal(10,2) not null,
+    primary key (numeroNota, codigoProducto),
+    foreign key (numeroNota) references venta(numeroNota),
+    foreign key (codigoProducto) references producto(codigo)
+);
+#Tabla de entradas al almacén
+create table abastecimiento (
+    idAbastecimiento int auto_increment not null,
+    fecha datetime not null default current_timestamp,
+    cantidadIngresada int not null,
+    codigoProducto int not null,
+    idEmpleado int not null,
+    primary key (idAbastecimiento),
+    foreign key (codigoProducto) references producto(codigo),
+    foreign key (idEmpleado) references empleado(idEmpleado)
+);
+#Relación entre los artículos y el almacén
+create table genera (
+    idAbastecimiento int not null,
+    codigoProducto int not null,
+    primary key (idAbastecimiento, codigoProducto),
+    foreign key (idAbastecimiento) references abastecimiento(idAbastecimiento),
+    foreign key (codigoProducto) references producto(codigo)
+);

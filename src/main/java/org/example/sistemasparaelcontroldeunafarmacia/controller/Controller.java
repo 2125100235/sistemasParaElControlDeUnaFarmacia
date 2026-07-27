@@ -277,7 +277,7 @@ public class Controller {
             System.out.println("(Error: " + e.getMessage() +")");
         }
     }
-    //Navegacion entre ventanas, se le pesan los parámetros de URL y evento al método de navegación
+    //Navegacion entre ventanas, se le pasan los parámetros de URL y evento al método de navegación
     @FXML
     void navPrincipal(MouseEvent event){
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/principal.fxml", event);
