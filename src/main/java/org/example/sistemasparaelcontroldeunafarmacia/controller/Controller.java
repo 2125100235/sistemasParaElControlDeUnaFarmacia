@@ -14,9 +14,23 @@ import javafx.stage.Stage;
 import org.example.sistemasparaelcontroldeunafarmacia.dao.ProductoDAO;
 import org.example.sistemasparaelcontroldeunafarmacia.model.Producto;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import org.example.sistemasparaelcontroldeunafarmacia.db.ConexionBD;
+
 import java.net.URL;
 
 public class Controller {
+
+    //Campos para el inicio de sesion nombre y Apellido
+    @FXML
+    private TextField txtNombre;
+
+    @FXML
+    private TextField txtApellido;
+
+
 
     @FXML
     private Button btnIniciarSesion;
@@ -280,7 +294,53 @@ public class Controller {
     //Navegacion entre ventanas, se le pasan los parámetros de URL y evento al método de navegación
     @FXML
     void navPrincipal(MouseEvent event){
-        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/principal.fxml", event);
+        //Comienza a validar los datos
+        if (txtNombre != null && txtApellido != null) {
+            String nombreIngresado = txtNombre.getText().trim();
+            String apellidoIngresado = txtApellido.getText().trim();
+
+            //Si los datos estan vacios, manda una alerta
+            if (nombreIngresado.isEmpty() || apellidoIngresado.isEmpty()) {
+                mostrarAlerta("Error de inicio de sesión", "Por favor ingresa tu nombre y apellido paterno.");
+                return;
+            }
+
+            //Guarda en una cadena de texto lo que se pedira en MariaDB
+            //Los signos ? son comodines donde enviaremos los datos reales mas adelante, esto por seguridad
+            String sql = "select * from empleado where nombre = ? and apellidopaterno = ?";
+
+            try {
+                // obtenemos la conexión compartida de tu amigo sin cerrarla
+                Connection cn = ConexionBD.getInstancia().getConexion();
+
+                // preparamos la consulta y nos aseguramos de cerrar solo la sentencia y el resultado
+                //cambiamos los ? por el nombre y apellidos ingresados
+                try (PreparedStatement ps = cn.prepareStatement(sql)) {
+                    ps.setString(1, nombreIngresado);
+                    ps.setString(2, apellidoIngresado);
+
+                    //ResultSet es una tabla temporal donde MariaDB devuelve los datos
+                    //ps.executeQuery() envía la pregunta terminada a MariaDB
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            String puesto = rs.getString("puesto");
+                            System.out.println("¡bienvenido " + nombreIngresado + "! puesto: " + puesto);
+
+                            // cambiamos a la pantalla principal
+                            navegacion("/org/example/sistemasparaelcontroldeunafarmacia/principal.fxml", event);
+                        } else {
+                            mostrarAlerta("Acceso denegado", "El empleado no se encuentra registrado.");
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // imprimimos el error exacto en la consola de intellij para verlo
+                e.printStackTrace();
+                mostrarAlerta("Error de conexión", "Ocurrió un error al consultar la base de datos.");
+            }
+        } else {
+            navegacion("/org/example/sistemasparaelcontroldeunafarmacia/principal.fxml", event);
+        }
     }
 
     @FXML
@@ -353,5 +413,16 @@ public class Controller {
     @FXML
     void navRegresarClientesMenu(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/clientesMenu.fxml", event);
+    }
+
+
+    //Este metodo se estará reutilizando al momento de que queramos mostrar un error.
+    // Al parecer, siempre tiene que quedar hasta ABAJO del codigo
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 }
