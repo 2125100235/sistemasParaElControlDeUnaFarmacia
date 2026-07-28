@@ -51,22 +51,22 @@
                <children>
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <Label text="Nombre(s)">
+                        <Label text="Correo">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="txtNombre" prefHeight="75.0" prefWidth="445.0" />
+                        <TextField fx:id="txtCorreo" prefHeight="75.0" prefWidth="445.0" />
                      </children>
                   </VBox>
                   <VBox prefHeight="129.0" prefWidth="889.0" GridPane.rowIndex="1">
                      <children>
-                        <Label text="Apellido paterno">
+                        <Label text="Contraseña">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="txtApellido" prefHeight="67.0" prefWidth="445.0" />
+                        <TextField fx:id="txtClave" prefHeight="67.0" prefWidth="445.0" />
                      </children>
                   </VBox>
                </children>

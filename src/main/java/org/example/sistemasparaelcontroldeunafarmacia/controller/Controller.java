@@ -25,10 +25,30 @@ public class Controller {
 
     //Campos para el inicio de sesion nombre y Apellido
     @FXML
-    private TextField txtNombre;
+    private TextField txtCorreo;
 
     @FXML
-    private TextField txtApellido;
+    private TextField txtClave;
+
+
+    //Campos para el registro
+    @FXML
+    private TextField txtRegNombre;
+
+    @FXML
+    private TextField txtRegApellidoP;
+
+    @FXML
+    private TextField txtRegApellidoM;
+
+    @FXML
+    private TextField txtRegClave;
+
+    @FXML
+    private TextField txtRegCorreo;
+
+    @FXML
+    private TextField txtRegTelefono;
 
 
 
@@ -294,47 +314,47 @@ public class Controller {
     //Navegacion entre ventanas, se le pasan los parámetros de URL y evento al método de navegación
     @FXML
     void navPrincipal(MouseEvent event){
-        //Comienza a validar los datos
-        if (txtNombre != null && txtApellido != null) {
-            String nombreIngresado = txtNombre.getText().trim();
-            String apellidoIngresado = txtApellido.getText().trim();
+        if (txtCorreo != null && txtClave != null) {
 
-            //Si los datos estan vacios, manda una alerta
-            if (nombreIngresado.isEmpty() || apellidoIngresado.isEmpty()) {
-                mostrarAlerta("Error de inicio de sesión", "Por favor ingresa tu nombre y apellido paterno.");
+            //Lee los datos ingresados y el correo lo hace todo minusculas para evitar errores
+            String correoIngresado = txtCorreo.getText().trim().toLowerCase();
+            String claveIngresada = txtClave.getText().trim();
+
+            //Si alguna de las casillas quedo vacia lanza un mensaje
+            if (correoIngresado.isEmpty() || claveIngresada.isEmpty()) {
+                mostrarAlerta("Error de inicio de sesión", "Por favor ingresa tu correo y contraseña.");
                 return;
             }
 
-            //Guarda en una cadena de texto lo que se pedira en MariaDB
-            //Los signos ? son comodines donde enviaremos los datos reales mas adelante, esto por seguridad
-            String sql = "select * from empleado where nombre = ? and apellidopaterno = ?";
+            // Buscamos correo y clave en MariaDB
+            String sql = "select * from empleado where correo = ? and clave = ?";
 
             try {
-                // obtenemos la conexión compartida de tu amigo sin cerrarla
                 Connection cn = ConexionBD.getInstancia().getConexion();
 
-                // preparamos la consulta y nos aseguramos de cerrar solo la sentencia y el resultado
-                //cambiamos los ? por el nombre y apellidos ingresados
+                //PreparedStatement es la plantilla sql y a esa le asigna los datos reales
+                //Despues remplaza los ? por el correo y la clave
                 try (PreparedStatement ps = cn.prepareStatement(sql)) {
-                    ps.setString(1, nombreIngresado);
-                    ps.setString(2, apellidoIngresado);
+                    ps.setString(1, correoIngresado);
+                    ps.setString(2, claveIngresada);
 
-                    //ResultSet es una tabla temporal donde MariaDB devuelve los datos
-                    //ps.executeQuery() envía la pregunta terminada a MariaDB
+                    //ResultSet es la tabla temporal donde se guardan los resultados de MariaDB
                     try (ResultSet rs = ps.executeQuery()) {
                         if (rs.next()) {
+                            String nombre = rs.getString("nombre");
                             String puesto = rs.getString("puesto");
-                            System.out.println("¡bienvenido " + nombreIngresado + "! puesto: " + puesto);
+                            System.out.println("¡bienvenido " + nombre + "! puesto: " + puesto);
 
-                            // cambiamos a la pantalla principal
+                            // Navegamos al menú principal
                             navegacion("/org/example/sistemasparaelcontroldeunafarmacia/principal.fxml", event);
                         } else {
-                            mostrarAlerta("Acceso denegado", "El empleado no se encuentra registrado.");
+                            mostrarAlerta("Acceso denegado", "Correo o contraseña incorrectos.");
                         }
                     }
                 }
             } catch (Exception e) {
-                // imprimimos el error exacto en la consola de intellij para verlo
+
+                //Si ocurre cualquier error, muestra este mensaje
                 e.printStackTrace();
                 mostrarAlerta("Error de conexión", "Ocurrió un error al consultar la base de datos.");
             }
@@ -346,6 +366,52 @@ public class Controller {
     @FXML
     void navRegistro(MouseEvent event){
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/registro.fxml", event);
+    }
+
+    @FXML
+    void registrarEmpleado(MouseEvent event) {
+        // 1. Obtener y limpiar los valores ingresados
+        String nombre = txtRegNombre.getText().trim().toLowerCase();
+        String apellidoP = txtRegApellidoP.getText().trim().toLowerCase();
+        String apellidoM = txtRegApellidoM.getText().trim().toLowerCase();
+        String clave = txtRegClave.getText().trim();
+        String correo = txtRegCorreo.getText().trim().toLowerCase();
+        String telefono = txtRegTelefono.getText().trim();
+
+        // 2. Validar que los campos obligatorios no estén vacíos
+        if (nombre.isEmpty() || apellidoP.isEmpty() || clave.isEmpty() || correo.isEmpty()) {
+            mostrarAlerta("Campos incompletos", "Por favor completa Nombre, Apellido paterno, Contraseña y Correo.");
+            return;
+        }
+
+        // 3. Consulta SQL para insertar el nuevo empleado (por defecto le asignamos puesto 'cajero')
+        String sql = "insert into empleado (nombre, apellidopaterno, apellidomaterno, clave, correo, telefono, puesto) values (?, ?, ?, ?, ?, ?, ?)";
+
+        try {
+            Connection cn = ConexionBD.getInstancia().getConexion();
+
+            try (PreparedStatement ps = cn.prepareStatement(sql)) {
+                ps.setString(1, nombre);
+                ps.setString(2, apellidoP);
+                ps.setString(3, apellidoM);
+                ps.setString(4, clave);
+                ps.setString(5, correo);
+                ps.setString(6, telefono);
+                ps.setString(7, "cajero"); // Puesto asignado por defecto al registrarse
+
+                int filasAfectadas = ps.executeUpdate();
+
+                if (filasAfectadas > 0) {
+                    System.out.println("¡Empleado registrado con éxito en MariaDB!");
+
+                    // Nos regresa a la pantalla de inicio de sesión para que pruebe entrar
+                    navInicioSesion(event);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta("Error al registrar", "No se pudo guardar el empleado en la base de datos.");
+        }
     }
 
     @FXML

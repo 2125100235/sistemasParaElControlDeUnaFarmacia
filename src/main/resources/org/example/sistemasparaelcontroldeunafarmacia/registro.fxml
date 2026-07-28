@@ -39,15 +39,15 @@
          </padding>
          <children>
             <GridPane prefHeight="237.0" prefWidth="920.0" style="-fx-background-color: #e8e8e8;" styleClass="gridPanes">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
                <children>
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
@@ -56,7 +56,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <TextField prefHeight="75.0" prefWidth="445.0" />
+                        <TextField fx:id="txtRegNombre" prefHeight="75.0" prefWidth="445.0" />
                      </children>
                   </VBox>
                   <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
@@ -66,7 +66,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <TextField prefHeight="67.0" prefWidth="445.0" />
+                        <TextField fx:id="txtRegApellidoP" prefHeight="67.0" prefWidth="445.0" />
                      </children>
                   </VBox>
                   <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="2">
@@ -76,7 +76,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <TextField prefHeight="90.0" prefWidth="445.0" />
+                        <TextField fx:id="txtRegApellidoM" prefHeight="90.0" prefWidth="445.0" />
                      </children>
                   </VBox>
                   <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
@@ -86,7 +86,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <TextField prefHeight="83.0" prefWidth="445.0" />
+                        <TextField fx:id="txtRegClave" prefHeight="83.0" prefWidth="445.0" />
                      </children>
                   </VBox>
                   <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -96,7 +96,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <TextField prefHeight="87.0" prefWidth="445.0" />
+                        <TextField fx:id="txtRegCorreo" prefHeight="87.0" prefWidth="445.0" />
                      </children>
                   </VBox>
                   <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
@@ -106,7 +106,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <TextField prefHeight="106.0" prefWidth="445.0" />
+                        <TextField fx:id="txtRegTelefono" prefHeight="106.0" prefWidth="445.0" />
                      </children>
                   </VBox>
                </children>
@@ -118,7 +118,7 @@
                <children>
                   <VBox alignment="CENTER" prefHeight="75.0" prefWidth="141.0">
                      <children>
-                        <Button fx:id="btnRegistro" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#navInicioSesion" prefHeight="39.0" prefWidth="119.0" styleClass="botonNormal" text="Registrarse" textAlignment="CENTER">
+                        <Button fx:id="btnRegistro" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#registrarEmpleado" prefHeight="39.0" prefWidth="119.0" styleClass="botonNormal" text="Registrarse" textAlignment="CENTER">
                            <font>
                               <Font size="16.0" />
                            </font>
