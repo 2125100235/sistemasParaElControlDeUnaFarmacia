@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" spacing="20.0" style="-fx-background-color: linear-gradient(to bottom, #ffffff 40%, #e0e0e0 90%);" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" spacing="20.0" style="-fx-background-color: linear-gradient(to bottom, #ffffff 40%, #e0e0e0 90%);" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
    <children>
       <HBox alignment="CENTER" maxHeight="448.0" prefHeight="448.0" prefWidth="1000.0" spacing="80.0" VBox.vgrow="ALWAYS">
          <children>
@@ -26,24 +26,24 @@
                   <VBox prefHeight="86.0" prefWidth="364.0">
                      <children>
                         <Label text="Nombre(s)" />
-                        <TextField />
+                        <TextField fx:id="txtAdminNombre" />
                      </children>
                   </VBox>
                   <VBox prefHeight="87.0" prefWidth="360.0">
                      <children>
                         <Label text="Correo Electrónico" />
-                        <TextField />
+                        <TextField fx:id="txtAdminCorreo" />
                      </children>
                   </VBox>
                   <VBox prefHeight="80.0" prefWidth="365.0">
                      <children>
                         <Label text="Contraseña" />
-                        <PasswordField />
+                        <PasswordField fx:id="txtAdminClave" />
                      </children>
                   </VBox>
                   <HBox alignment="CENTER">
                      <children>
-                        <Button alignment="CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: #74ADCF;" text="Autorizar" />
+                        <Button fx:id="autorizar" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#autorizar" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: #74ADCF;" text="Autorizar" />
                      </children>
                   </HBox>
                </children>
@@ -63,16 +63,43 @@
       </HBox>
       <HBox alignment="CENTER_LEFT" prefHeight="108.0" prefWidth="960.0">
          <children>
-            <Label prefHeight="44.0" prefWidth="207.0" text="Si eres administrador y olvidaste tu contraseña, comunicate con nosotros" wrapText="true">
+            <Label prefHeight="44.0" prefWidth="214.0" text="Si eres administrador y olvidaste tu contraseña, comunicate con nosotros" wrapText="true">
                <padding>
-                  <Insets left="5.0" />
+                  <Insets left="5.0" right="5.0" />
                </padding>
             </Label>
-            <Label prefHeight="40.0" prefWidth="174.0" text="331122334455 logimedtech@gmail.com " wrapText="true">
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-            </Label>
+            <VBox alignment="CENTER" prefHeight="62.0" prefWidth="161.0">
+               <children>
+                  <HBox prefHeight="23.0" prefWidth="161.0">
+                     <children>
+                        <ImageView fitHeight="20.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../../../../../../../../../Downloads/Telefono.png" />
+                           </image>
+                        </ImageView>
+                        <Label text="33 1122 3344">
+                           <padding>
+                              <Insets left="5.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="21.0" prefWidth="161.0">
+                     <children>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../../../../../../../../../Downloads/email.png" />
+                           </image>
+                        </ImageView>
+                        <Label text="logimedtech@gmail.com">
+                           <padding>
+                              <Insets left="4.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
             <Region prefHeight="108.0" prefWidth="357.0" HBox.hgrow="ALWAYS" />
             <ImageView fitHeight="59.0" fitWidth="249.0" pickOnBounds="true" preserveRatio="true">
                <image>

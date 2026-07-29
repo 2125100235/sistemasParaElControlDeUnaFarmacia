@@ -51,6 +51,25 @@ public class Controller {
     private TextField txtRegTelefono;
 
 
+    //Campos para reestablecer contraseña
+    //Autorizacion de admin
+    @FXML
+    private TextField txtAdminNombre;
+
+    @FXML
+    private TextField txtAdminCorreo;
+
+    @FXML
+    private TextField txtAdminClave;
+
+    //reestablecer nueva contraseña
+    @FXML
+    private TextField txtCorreoCambio;
+
+    @FXML
+    private TextField txtNuevaClave;
+
+
 
     @FXML
     private Button btnIniciarSesion;
@@ -415,7 +434,86 @@ public class Controller {
     }
 
     @FXML
+    void autorizar(MouseEvent event) {
+        String nombreAdmin = txtAdminNombre.getText().trim().toLowerCase();
+        String correoAdmin = txtAdminCorreo.getText().trim().toLowerCase();
+        String claveAdmin = txtAdminClave.getText().trim();
+
+        if (nombreAdmin.isEmpty() || correoAdmin.isEmpty() || claveAdmin.isEmpty()) {
+            mostrarAlerta("Campos vacíos", "Por favor completa todos los campos del administrador.");
+            return;
+        }
+
+        // Consultamos si existe un empleado con ese correo, clave y puesto de gerente
+        String sql = "select * from empleado where correo = ? and clave = ? and puesto = 'gerente'";
+
+        try {
+            Connection cn = ConexionBD.getInstancia().getConexion();
+            try (PreparedStatement ps = cn.prepareStatement(sql)) {
+                ps.setString(1, correoAdmin);
+                ps.setString(2, claveAdmin);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        System.out.println("¡Autorización concedida por el gerente!");
+                        // Redirigimos a la segunda pantalla para cambiar la contraseña
+                        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/restablecerContraseñaDos.fxml", event);
+                    } else {
+                        mostrarAlerta("Acceso Denegado", "Datos de administrador incorrectos o no tienes permisos de gerente.");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta("Error de conexión", "Ocurrió un error al verificar los datos del administrador.");
+        }
+    }
+
+    @FXML
+    void restablecer(MouseEvent event) {
+        String correoUsuario = txtCorreoCambio.getText().trim().toLowerCase();
+        String nuevaClave = txtNuevaClave.getText().trim();
+
+        if (correoUsuario.isEmpty() || nuevaClave.isEmpty()) {
+            mostrarAlerta("Campos vacíos", "Por favor ingresa el correo y la nueva contraseña.");
+            return;
+        }
+
+        // Actualizamos la clave del empleado que tenga ese correo
+        String sql = "update empleado set clave = ? where correo = ?";
+
+        try {
+            Connection cn = ConexionBD.getInstancia().getConexion();
+            try (PreparedStatement ps = cn.prepareStatement(sql)) {
+                ps.setString(1, nuevaClave);
+                ps.setString(2, correoUsuario);
+
+                int filasAfectadas = ps.executeUpdate();
+
+                if (filasAfectadas > 0) {
+                    mostrarAlerta("Éxito", "La contraseña ha sido actualizada correctamente.");
+                    System.out.println("Contraseña actualizada para: " + correoUsuario);
+
+                    // Regresamos a la pantalla de Inicio de Sesión
+                    navInicioSesion(event);
+                } else {
+                    mostrarAlerta("Usuario no encontrado", "No existe ningún empleado registrado con ese correo.");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta("Error al actualizar", "No se pudo cambiar la contraseña en la base de datos.");
+        }
+    }
+
+    @FXML
+    void navRestablecer(MouseEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/restablecerContraseña.fxml", event);
+    }
+
+    @FXML
     void navRegresarPrincipal(MouseEvent event){
+        System.out.println(">>> ¡El botón 'Olvidé mi contraseña' SÍ funciona! Intentando cambiar de pantalla... <<<");
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/principal.fxml", event);
     }
 
