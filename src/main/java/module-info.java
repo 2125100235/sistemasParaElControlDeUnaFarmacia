@@ -7,6 +7,7 @@ module org.example.sistemasparaelcontroldeunafarmacia {
 
 
     opens org.example.sistemasparaelcontroldeunafarmacia to javafx.fxml;
+    opens org.example.sistemasparaelcontroldeunafarmacia.model to javafx.base, javafx.fxml;
     exports org.example.sistemasparaelcontroldeunafarmacia;
     exports org.example.sistemasparaelcontroldeunafarmacia.controller;
     opens org.example.sistemasparaelcontroldeunafarmacia.controller to javafx.fxml;

@@ -76,7 +76,7 @@
                      <children>
                         <Label text="Fecha de caducidad" />
                         <TextField fx:id="txtFecha" />
-                        <Button fx:id="btnNuevoProducto" mnemonicParsing="false" onAction="#agregarProducto" style="-fx-background-color: white; -fx-border-color: black;" styleClass="botonNormal" text="Añadir" textAlignment="CENTER">
+                        <Button fx:id="btnNuevoProducto" mnemonicParsing="false" onAction="#agregarProducto" onMouseClicked="#agregarProducto" style="-fx-background-color: white; -fx-border-color: black;" styleClass="botonNormal" text="Añadir" textAlignment="CENTER">
                            <VBox.margin>
                               <Insets top="5.0" />
                            </VBox.margin></Button>

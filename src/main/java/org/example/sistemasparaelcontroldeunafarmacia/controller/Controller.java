@@ -146,7 +146,7 @@ public class Controller {
     private Button btnProductosRegresarPrincipal;
 
     @FXML
-    private TableView<?> tablaProductos;
+    private TableView<Producto> tablaProductos;
 
     @FXML
     private TableColumn<?, ?> colCaducidad;
@@ -185,12 +185,12 @@ public class Controller {
             ventanaActual.show();
         }
         catch(Exception e){
-            System.out.println("(Error: " + e.getMessage() +")");
+            e.printStackTrace();
         }
     }
     //Navegacion entre ventanas, se le pasan los parámetros de URL y evento al método de navegación
     @FXML
-    void navPrincipal(MouseEvent event){
+    public void navPrincipal(MouseEvent event){
         if (txtCorreo != null && txtClave != null) {
 
             //Lee los datos ingresados y el correo lo hace todo minusculas para evitar errores
@@ -241,12 +241,12 @@ public class Controller {
     }
 
     @FXML
-    void navRegistro(MouseEvent event){
+    public void navRegistro(MouseEvent event){
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/registro.fxml", event);
     }
 
     @FXML
-    void registrarEmpleado(MouseEvent event) {
+    public void registrarEmpleado(MouseEvent event) {
         // 1. Obtener y limpiar los valores ingresados
         String nombre = txtRegNombre.getText().trim().toLowerCase();
         String apellidoP = txtRegApellidoP.getText().trim().toLowerCase();
@@ -292,7 +292,7 @@ public class Controller {
     }
 
     @FXML
-    void autorizar(MouseEvent event) {
+    public void autorizar(MouseEvent event) {
         String nombreAdmin = txtAdminNombre.getText().trim().toLowerCase();
         String correoAdmin = txtAdminCorreo.getText().trim().toLowerCase();
         String claveAdmin = txtAdminClave.getText().trim();
@@ -328,7 +328,7 @@ public class Controller {
     }
 
     @FXML
-    void restablecer(MouseEvent event) {
+    public void restablecer(MouseEvent event) {
         String correoUsuario = txtCorreoCambio.getText().trim().toLowerCase();
         String nuevaClave = txtNuevaClave.getText().trim();
 
@@ -365,65 +365,98 @@ public class Controller {
     }
 
     @FXML
-    void navRestablecer(MouseEvent event) {
+    public void navRestablecer(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/restablecerContraseña.fxml", event);
     }
 
-    @FXML
-    public void initialize() {
-        // Configuramos la lista que guardará los productos en pantalla
-        listaProductos = FXCollections.observableArrayList();
+    public void cargarProductosBD() {
+        if (listaProductos == null) return;
+        listaProductos.clear(); // Limpia la lista visual para no duplicar datos
 
-        // Le decimos a cada columna de dónde va a sacar la información (deben llamarse igual que en la clase Producto)
-        if (colCodigo != null) { // El IF evita errores si abres otra pantalla que no tenga esta tabla
-            colCodigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
-            colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-            colExistencia.setCellValueFactory(new PropertyValueFactory<>("existencia"));
+        String sql = "SELECT * FROM producto";
 
-            // Conectamos la lista vacía con la tabla
-            tablaAbastecimiento.setItems(listaProductos);
+        try {
+            Connection cn = ConexionBD.getInstancia().getConexion();
+            PreparedStatement ps = cn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                // Obtenemos los datos de cada columna de MySQL
+                int codigo = rs.getInt("codigo"); // Si en MySQL se llama "id" o "idProducto", cámbialo aquí
+                String nombre = rs.getString("nombre");
+                int existencia = rs.getInt("existencia");
+
+                // Creamos el objeto Producto y lo metemos a la lista que ve la tabla
+                listaProductos.add(new Producto(codigo, nombre, existencia));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error al cargar los productos desde la base de datos.");
         }
     }
 
     @FXML
+    public void initialize() {
+        listaProductos = FXCollections.observableArrayList();
+
+        // Vinculamos las columnas
+        if (colCodigo != null) {
+            colCodigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
+            colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+            colExistencia.setCellValueFactory(new PropertyValueFactory<>("existencia"));
+        }
+
+        // Vinculamos la tabla (sea cual sea el id que tenga la pantalla activa)
+        if (tablaAbastecimiento != null) {
+            tablaAbastecimiento.setItems(listaProductos);
+        } else if (tablaProductos != null) {
+            tablaProductos.setItems(listaProductos);
+        }
+
+        // Carga los datos de MySQL en cuanto abre la ventana
+        cargarProductosBD();
+    }
+
+    @FXML
     public void agregarProducto() {
-        // 1. Obtenemos los datos que escribiste en la pantalla
-        String nombre = txtNombre.getText();
-        int existencia = Integer.parseInt(txtCantidad.getText());
-        double precio = Double.parseDouble(txtPrecio.getText());
-        String fecha = txtFecha.getText(); // El formato debe ser YYYY-MM-DD
+        // 1. Validar que las cajas no estén vacías para evitar la pantalla negra / error
+        if (txtNombre.getText().trim().isEmpty() ||
+                txtCantidad.getText().trim().isEmpty() ||
+                txtPrecio.getText().trim().isEmpty()) {
+            System.out.println("Por favor llena Nombre, Cantidad y Precio.");
+            return;
+        }
 
-        // 2. Preparamos el comando SQL para insertar (Nota que no insertamos el código, porque es AUTO_INCREMENT)
-        String sql = "INSERT INTO producto (nombre, existencia, precioVenta, fechaCaducidad) VALUES (?, ?, ?, ?)";
+        try {
+            // 2. Leemos los datos DENTRO del try (así si ponen letras en vez de números, salta al catch)
+            String nombre = txtNombre.getText().trim();
+            int existencia = Integer.parseInt(txtCantidad.getText().trim());
+            double precio = Double.parseDouble(txtPrecio.getText().trim());
+            String fecha = txtFecha.getText().trim(); // Formato: YYYY-MM-DD
 
-        // 3. Nos conectamos a la base de datos
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/farmacia", "root", "");
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            String sql = "INSERT INTO producto (nombre, existencia, precioVenta, fechaCaducidad) VALUES (?, ?, ?, ?)";
 
-            pstmt.setString(1, nombre);
-            pstmt.setInt(2, existencia);
-            pstmt.setDouble(3, precio);
-            pstmt.setString(4, fecha);
+            // 3. Conexión a la BD
+            try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/farmacia", "root", "");
+                 PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            // Ejecutamos el guardado
-            pstmt.executeUpdate();
+                pstmt.setString(1, nombre);
+                pstmt.setInt(2, existencia);
+                pstmt.setDouble(3, precio);
+                pstmt.setString(4, fecha);
 
-            // 4. Obtenemos el código automático que generó XAMPP para este producto
-            ResultSet rs = pstmt.getGeneratedKeys();
-            if (rs.next()) {
-                int nuevoCodigo = rs.getInt(1);
-
-                // 5. Creamos el producto y lo añadimos a la tabla visualmente
-                Producto nuevoProducto = new Producto(nuevoCodigo, nombre, existencia);
-                listaProductos.add(nuevoProducto);
+                pstmt.executeUpdate();
 
                 System.out.println("¡Producto guardado exitosamente!");
 
-                // Limpiamos las cajitas de texto para meter otro
+                // Limpiamos las cajitas
                 txtNombre.clear();
                 txtCantidad.clear();
                 txtPrecio.clear();
                 txtFecha.clear();
+
+                // Recargamos la tabla automáticamente desde la BD
+                cargarProductosBD();
             }
 
         } catch (SQLException e) {
@@ -434,7 +467,7 @@ public class Controller {
     }
 
     @FXML
-    void navRegresarPrincipal(MouseEvent event){
+    public void navRegresarPrincipal(MouseEvent event){
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/principal.fxml", event);
     }
 
