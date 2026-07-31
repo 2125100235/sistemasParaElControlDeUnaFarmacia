@@ -1,6 +1,7 @@
 package org.example.sistemasparaelcontroldeunafarmacia.controller;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,15 +9,15 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.sistemasparaelcontroldeunafarmacia.dao.ProductoDAO;
 import org.example.sistemasparaelcontroldeunafarmacia.model.Producto;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
+
 import org.example.sistemasparaelcontroldeunafarmacia.db.ConexionBD;
 
 import java.net.URL;
@@ -69,6 +70,30 @@ public class Controller {
     @FXML
     private TextField txtNuevaClave;
 
+    //Tabla productos
+    @FXML private TextField txtCodigo;
+
+    @FXML private TextField txtNombre;
+
+    @FXML private TextField txtCantidad;
+
+    @FXML private TextField txtPrecio;
+
+    @FXML private TextField txtFecha;
+
+    @FXML private Button btnNuevoProducto;
+
+    @FXML private TableView<Producto> tablaAbastecimiento;
+
+    @FXML private TableColumn<Producto, Integer> colCodigo;
+
+    @FXML private TableColumn<Producto, String> colNombre;
+
+    @FXML private TableColumn<Producto, Integer> colExistencia;
+
+    // Esta lista especial es la que actualizará la tabla en tiempo real
+    private ObservableList<Producto> listaProductos;
+
 
 
     @FXML
@@ -118,9 +143,6 @@ public class Controller {
     private Button btnEliminarProducto;
 
     @FXML
-    private Button btnNuevoProducto;
-
-    @FXML
     private Button btnProductosRegresarPrincipal;
 
     @FXML
@@ -130,21 +152,10 @@ public class Controller {
     private TableColumn<?, ?> colCaducidad;
 
     @FXML
-    private TableColumn<?, ?> colCodigo;
-
-    @FXML
-    private TableColumn<?, ?> colExistencia;
-
-    @FXML
-    private TableColumn<?, ?> colNombre;
-
-    @FXML
     private TableColumn<?, ?> colPrecio;
 
     @FXML
     private Button btnNuevoProductoRegresarProductos;
-    @FXML
-    private TableView<?> tablaAbastecimiento;
 
     //ClientesMenu
     @FXML
@@ -154,7 +165,6 @@ public class Controller {
     //Acciones en BD
     private ProductoDAO productoDAO;
     private Producto productoSeleccionado;
-    private ObservableList<Producto> listaProductos;
 
  //Método principal para la navegación entre ventanas, se utiliza de forma universal para toda la navegación, por botón se le pasan los parámetros de la URL de la ventana hacia la que va y el evento desde el cuál fue accionado (el botón)
     @FXML
@@ -360,8 +370,71 @@ public class Controller {
     }
 
     @FXML
+    public void initialize() {
+        // Configuramos la lista que guardará los productos en pantalla
+        listaProductos = FXCollections.observableArrayList();
+
+        // Le decimos a cada columna de dónde va a sacar la información (deben llamarse igual que en la clase Producto)
+        if (colCodigo != null) { // El IF evita errores si abres otra pantalla que no tenga esta tabla
+            colCodigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
+            colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+            colExistencia.setCellValueFactory(new PropertyValueFactory<>("existencia"));
+
+            // Conectamos la lista vacía con la tabla
+            tablaAbastecimiento.setItems(listaProductos);
+        }
+    }
+
+    @FXML
+    public void agregarProducto() {
+        // 1. Obtenemos los datos que escribiste en la pantalla
+        String nombre = txtNombre.getText();
+        int existencia = Integer.parseInt(txtCantidad.getText());
+        double precio = Double.parseDouble(txtPrecio.getText());
+        String fecha = txtFecha.getText(); // El formato debe ser YYYY-MM-DD
+
+        // 2. Preparamos el comando SQL para insertar (Nota que no insertamos el código, porque es AUTO_INCREMENT)
+        String sql = "INSERT INTO producto (nombre, existencia, precioVenta, fechaCaducidad) VALUES (?, ?, ?, ?)";
+
+        // 3. Nos conectamos a la base de datos
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/farmacia", "root", "");
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            pstmt.setString(1, nombre);
+            pstmt.setInt(2, existencia);
+            pstmt.setDouble(3, precio);
+            pstmt.setString(4, fecha);
+
+            // Ejecutamos el guardado
+            pstmt.executeUpdate();
+
+            // 4. Obtenemos el código automático que generó XAMPP para este producto
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                int nuevoCodigo = rs.getInt(1);
+
+                // 5. Creamos el producto y lo añadimos a la tabla visualmente
+                Producto nuevoProducto = new Producto(nuevoCodigo, nombre, existencia);
+                listaProductos.add(nuevoProducto);
+
+                System.out.println("¡Producto guardado exitosamente!");
+
+                // Limpiamos las cajitas de texto para meter otro
+                txtNombre.clear();
+                txtCantidad.clear();
+                txtPrecio.clear();
+                txtFecha.clear();
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al guardar en la base de datos: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("Por favor, ingresa números válidos en cantidad y precio.");
+        }
+    }
+
+    @FXML
     void navRegresarPrincipal(MouseEvent event){
-        System.out.println(">>> ¡El botón 'Olvidé mi contraseña' SÍ funciona! Intentando cambiar de pantalla... <<<");
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/principal.fxml", event);
     }
 
@@ -381,49 +454,49 @@ public class Controller {
     }
 
     @FXML
-    void navProductosMenu(MouseEvent event) {
+    public void navProductosMenu(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/productosMenu.fxml", event);
     }
 
     @FXML
-    void navRegistroMenu(MouseEvent event) {
+    public void navRegistroMenu(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/registroMenu.fxml", event);
     }
 
     @FXML
-    void navVentasMenu(MouseEvent event) {
+    public void navVentasMenu(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/ventasDiaMenu.fxml", event);
     }
 
     @FXML
-    void navVentasMesMenu(MouseEvent event) {
+    public void navVentasMesMenu(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/ventasMesMenu.fxml", event);
     }
 
     @FXML
-    void navVentasSemanaMenu(MouseEvent event) {
+    public void navVentasSemanaMenu(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/ventasSemanaMenu.fxml", event);
     }
 
     @FXML
-    void navAyuda(MouseEvent event) {
+    public void navAyuda(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/ayuda.fxml", event);
     }
     @FXML
-    void navNuevoProducto(MouseEvent event) {
+    public void navNuevoProducto(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/nuevoProducto.fxml", event);
     }
     @FXML
-    void navRegresarProductosMenu(MouseEvent event) {
+    public void navRegresarProductosMenu(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/productosMenu.fxml", event);
     }
 
     @FXML
-    void navNuevoCliente(MouseEvent event) {
+    public void navNuevoCliente(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/nuevoCliente.fxml", event);
     }
     @FXML
-    void navRegresarClientesMenu(MouseEvent event) {
+    public void navRegresarClientesMenu(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/clientesMenu.fxml", event);
     }
 

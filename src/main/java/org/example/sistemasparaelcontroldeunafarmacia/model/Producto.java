@@ -20,6 +20,13 @@ import java.util.Date;
         this.fechacaducidad = fechacaducidad;
         }
 
+        //Constructor
+        public Producto(int nuevoCodigo, String nombre, int existencia) {
+            this.codigo = nuevoCodigo;
+            this.nombre = nombre;
+            this.existencia = existencia;
+        }
+
         public int getCodigo() {
             return codigo;
         }
