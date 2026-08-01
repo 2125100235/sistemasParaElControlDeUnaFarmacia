@@ -32,7 +32,7 @@ public class ProductoDAO {
             ps.setString(1, producto.getNombre());
             ps.setInt(2, producto.getCantidad());
             ps.setFloat(3, producto.getPrecioVenta());
-            ps.setDate(4, producto.getFechacaducidad());
+            ps.setDate(4, (Date) producto.getFechaCaducidad());
 
             ps.executeUpdate();
             System.out.println("Producto insertado");
@@ -125,7 +125,7 @@ public class ProductoDAO {
             ps.setInt(2, producto.getCantidad());
             ps.setInt(3,producto.getExistencia());
             ps.setFloat(4, producto.getPrecioVenta());
-            ps.setDate(5, producto.getFechacaducidad());
+            ps.setDate(5, (Date) producto.getFechaCaducidad());
             ps.setInt(6, producto.getCodigo());
 
 

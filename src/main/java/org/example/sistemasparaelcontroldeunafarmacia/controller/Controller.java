@@ -91,6 +91,10 @@ public class Controller {
 
     @FXML private TableColumn<Producto, Integer> colExistencia;
 
+    @FXML private TableColumn<Producto, Float> colPrecio;
+
+    @FXML private TableColumn<Producto, Date> colCaducidad;
+
     // Esta lista especial es la que actualizará la tabla en tiempo real
     private ObservableList<Producto> listaProductos;
 
@@ -147,12 +151,6 @@ public class Controller {
 
     @FXML
     private TableView<Producto> tablaProductos;
-
-    @FXML
-    private TableColumn<?, ?> colCaducidad;
-
-    @FXML
-    private TableColumn<?, ?> colPrecio;
 
     @FXML
     private Button btnNuevoProductoRegresarProductos;
@@ -371,42 +369,59 @@ public class Controller {
 
     public void cargarProductosBD() {
         if (listaProductos == null) return;
-        listaProductos.clear(); // Limpia la lista visual para no duplicar datos
+        listaProductos.clear(); // Limpiamos la lista para evitar duplicados en la pantalla
 
-        String sql = "SELECT * FROM producto";
+        String sql = "SELECT * FROM producto"; //Instruccion a MySQL de trar todo lo de la tabla producto
 
-        try {
-            Connection cn = ConexionBD.getInstancia().getConexion();
-            PreparedStatement ps = cn.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/farmacia", "root", "");
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
 
+            //rs.next funciona como un cursor, que detecta la tabla en MySQl y comienza desde arriba y en cada vuelta, baja un renglon
+            //devuelve true hasta que el ciclo termina
             while (rs.next()) {
-                // Obtenemos los datos de cada columna de MySQL
-                int codigo = rs.getInt("codigo"); // Si en MySQL se llama "id" o "idProducto", cámbialo aquí
+                //Extraemos el valor de la tabla depende el nombre y tipo de la columna
+                int codigo = rs.getInt("codigo");
                 String nombre = rs.getString("nombre");
                 int existencia = rs.getInt("existencia");
+                int cantidad = existencia; // Si en tu BD no hay columna "cantidad", usamos la misma existencia
+                float precioVenta = rs.getFloat("precioVenta");
+                java.sql.Date fechaCaducidad = rs.getDate("fechaCaducidad");
 
-                // Creamos el objeto Producto y lo metemos a la lista que ve la tabla
-                listaProductos.add(new Producto(codigo, nombre, existencia));
+                // Usamos el constructor completo de la clase Producto
+                listaProductos.add(new Producto(codigo, nombre, cantidad, existencia, precioVenta, fechaCaducidad));
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error al cargar los productos desde la base de datos.");
+        } catch (SQLException e) {
+            System.out.println("Error al cargar productos desde MySQL: " + e.getMessage());
         }
     }
 
     @FXML
     public void initialize() {
+
+        //Esto lo que hace es crear una lista para guardar los productos, pero en una lista "observable"
+        //Lo que hace que la tabla visual se actualice solita. Detecta y actualiza
         listaProductos = FXCollections.observableArrayList();
 
-        // Vinculamos las columnas
+        // Primero valida si la columna que van a usar no es nula, es decir, existe, para despues hacer la relacion
+        //Ya que en este mismo codigo tenemos programadas rodas las interfaces,entonces si no valida e intenta usar algo que no existe, el programa colapsaria
         if (colCodigo != null) {
             colCodigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
+        }
+        if (colNombre != null) {
             colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        }
+        if (colExistencia != null) {
             colExistencia.setCellValueFactory(new PropertyValueFactory<>("existencia"));
         }
+        if (colPrecio != null) {
+            colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
+        }
+        if (colCaducidad != null) {
+            colCaducidad.setCellValueFactory(new PropertyValueFactory<>("fechaCaducidad"));
+        }
 
-        // Vinculamos la tabla (sea cual sea el id que tenga la pantalla activa)
+        // Vinculamos la tabla
         if (tablaAbastecimiento != null) {
             tablaAbastecimiento.setItems(listaProductos);
         } else if (tablaProductos != null) {
@@ -419,7 +434,7 @@ public class Controller {
 
     @FXML
     public void agregarProducto() {
-        // 1. Validar que las cajas no estén vacías para evitar la pantalla negra / error
+        // 1. Validamos que los campos obligatorios no estén vacíos
         if (txtNombre.getText().trim().isEmpty() ||
                 txtCantidad.getText().trim().isEmpty() ||
                 txtPrecio.getText().trim().isEmpty()) {
@@ -428,41 +443,56 @@ public class Controller {
         }
 
         try {
-            // 2. Leemos los datos DENTRO del try (así si ponen letras en vez de números, salta al catch)
+
+            //Definimos las variables
             String nombre = txtNombre.getText().trim();
             int existencia = Integer.parseInt(txtCantidad.getText().trim());
-            double precio = Double.parseDouble(txtPrecio.getText().trim());
-            String fecha = txtFecha.getText().trim(); // Formato: YYYY-MM-DD
+            float precioVenta = Float.parseFloat(txtPrecio.getText().trim());
+            String fechaTexto = txtFecha.getText().trim(); // Espera: AAAA-MM-DD
 
+            //Los signos de interrogacion como comodines usados por seguridad.
             String sql = "INSERT INTO producto (nombre, existencia, precioVenta, fechaCaducidad) VALUES (?, ?, ?, ?)";
 
-            // 3. Conexión a la BD
             try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/farmacia", "root", "");
-                 PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
+                //pasamos los valores a los signos por orden
                 pstmt.setString(1, nombre);
                 pstmt.setInt(2, existencia);
-                pstmt.setDouble(3, precio);
-                pstmt.setString(4, fecha);
+                pstmt.setFloat(3, precioVenta);
 
+                // Convertimos el texto a java.sql.Date si no está vacío
+                //Es decir, si el textField no esta vacio, lo que ingresamos en fecha lo transforma en cierto lenguaje que MySQL entiende y lo guarda
+                //Si esta vacio, simplemente guarda null para evitar errores
+                if (fechaTexto.isEmpty()) {
+                    pstmt.setNull(4, java.sql.Types.DATE);
+                } else {
+                    pstmt.setDate(4, java.sql.Date.valueOf(fechaTexto));
+                }
+
+                //Eso simplemente agrega el producto a la base de datos y agrega un nuevo renglon a la tabla
                 pstmt.executeUpdate();
-
                 System.out.println("¡Producto guardado exitosamente!");
 
-                // Limpiamos las cajitas
+                // Limpiamos los campos
                 txtNombre.clear();
                 txtCantidad.clear();
                 txtPrecio.clear();
                 txtFecha.clear();
 
-                // Recargamos la tabla automáticamente desde la BD
+                // Recargamos la tabla en tiempo real
                 cargarProductosBD();
             }
 
-        } catch (SQLException e) {
-            System.out.println("Error al guardar en la base de datos: " + e.getMessage());
         } catch (NumberFormatException e) {
-            System.out.println("Por favor, ingresa números válidos en cantidad y precio.");
+            // 1. PRIMERO atrapamos errores de conversion de números (letras en precio/cantidad)
+            System.out.println("Ingresa números válidos en Cantidad y Precio.");
+        } catch (IllegalArgumentException e) {
+            // 2. DESPUÉS atrapamos errores de formato de fecha
+            System.out.println("Error en la fecha: Recuerda usar el formato AAAA-MM-DD (ejemplo: 2026-12-31).");
+        } catch (SQLException e) {
+            // 3. POR ÚLTIMO errores de la base de datos
+            System.out.println("Error de SQL al guardar: " + e.getMessage());
         }
     }
 
