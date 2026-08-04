@@ -5,7 +5,7 @@
     -fx-border-width: 1;
     -fx-border-radius: 20;
     -fx-background-radius: 20;
-    -fx-padding: 2;
+    -fx-padding: 20;
     -fx-alignment: center;
 }
 .campoBuscador
@@ -16,7 +16,7 @@
     -fx-border-width: 0; /* Quitamos su borde nativo */
     -fx-border-color: transparent;
     -fx-prompt-text-fill: #A0A0A0; /* Color gris suave para el "Buscar..." */
-    -fx-font-size: 14px;
+    -fx-font-size: 17px;
     -fx-padding: 5 10 5 10; /* Espaciado interno del texto (arriba der abajo izq) */
 }
 /* Botones */
