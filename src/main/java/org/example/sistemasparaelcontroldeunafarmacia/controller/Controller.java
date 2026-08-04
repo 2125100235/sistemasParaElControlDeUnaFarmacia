@@ -3,8 +3,10 @@ package org.example.sistemasparaelcontroldeunafarmacia.controller;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -12,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.example.sistemasparaelcontroldeunafarmacia.dao.ProductoDAO;
 import org.example.sistemasparaelcontroldeunafarmacia.model.Producto;
@@ -21,6 +24,9 @@ import java.sql.*;
 import org.example.sistemasparaelcontroldeunafarmacia.db.ConexionBD;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 public class Controller {
 
@@ -70,6 +76,16 @@ public class Controller {
     @FXML
     private TextField txtNuevaClave;
 
+    //Búsqueda de elementos
+    @FXML
+    private TextField barraBusqueda;
+
+    @FXML
+    private FontAwesomeIconView btnBuscar;
+
+    @FXML
+    private FilteredList<Producto> listaFiltrada;
+
     //Tabla productos
     @FXML private TextField txtCodigo;
 
@@ -91,14 +107,8 @@ public class Controller {
 
     @FXML private TableColumn<Producto, Integer> colExistencia;
 
-    @FXML private TableColumn<Producto, Float> colPrecio;
-
-    @FXML private TableColumn<Producto, Date> colCaducidad;
-
     // Esta lista especial es la que actualizará la tabla en tiempo real
     private ObservableList<Producto> listaProductos;
-
-
 
     @FXML
     private Button btnIniciarSesion;
@@ -151,6 +161,12 @@ public class Controller {
 
     @FXML
     private TableView<Producto> tablaProductos;
+
+    @FXML
+    private TableColumn<Producto, String> colCaducidad;
+
+    @FXML
+    private TableColumn<Producto, Float> colPrecio;
 
     @FXML
     private Button btnNuevoProductoRegresarProductos;
@@ -258,7 +274,11 @@ public class Controller {
             mostrarAlerta("Campos incompletos", "Por favor completa Nombre, Apellido paterno, Contraseña y Correo.");
             return;
         }
-
+        // Como parte de lo anterior, validamos que el correo tenga el uso de arroba
+        if (!correo.contains("@")){
+            mostrarAlerta("Correo invalido","El correo tiene que contener un arroba.");
+            return;
+        }
         // 3. Consulta SQL para insertar el nuevo empleado (por defecto le asignamos puesto 'cajero')
         String sql = "insert into empleado (nombre, apellidopaterno, apellidomaterno, clave, correo, telefono, puesto) values (?, ?, ?, ?, ?, ?, ?)";
 
@@ -369,42 +389,22 @@ public class Controller {
 
     public void cargarProductosBD() {
         if (listaProductos == null) return;
-        listaProductos.clear(); // Limpiamos la lista para evitar duplicados en la pantalla
 
-        String sql = "SELECT * FROM producto"; //Instruccion a MySQL de trar todo lo de la tabla producto
+        listaProductos.clear(); // Limpia la lista actual
 
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/farmacia", "root", "");
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-
-            //rs.next funciona como un cursor, que detecta la tabla en MySQl y comienza desde arriba y en cada vuelta, baja un renglon
-            //devuelve true hasta que el ciclo termina
-            while (rs.next()) {
-                //Extraemos el valor de la tabla depende el nombre y tipo de la columna
-                int codigo = rs.getInt("codigo");
-                String nombre = rs.getString("nombre");
-                int existencia = rs.getInt("existencia");
-                int cantidad = existencia; // Si en tu BD no hay columna "cantidad", usamos la misma existencia
-                float precioVenta = rs.getFloat("precioVenta");
-                java.sql.Date fechaCaducidad = rs.getDate("fechaCaducidad");
-
-                // Usamos el constructor completo de la clase Producto
-                listaProductos.add(new Producto(codigo, nombre, cantidad, existencia, precioVenta, fechaCaducidad));
-            }
-        } catch (SQLException e) {
-            System.out.println("Error al cargar productos desde MySQL: " + e.getMessage());
-        }
+        // El DAO hace toda la consulta SQL por nosotros y nos regresa la lista llena
+        List<Producto> productosBD = productoDAO.listar();
+        listaProductos.addAll(productosBD);
     }
 
     @FXML
     public void initialize() {
-
-        //Esto lo que hace es crear una lista para guardar los productos, pero en una lista "observable"
-        //Lo que hace que la tabla visual se actualice solita. Detecta y actualiza
+        productoDAO = new ProductoDAO();
         listaProductos = FXCollections.observableArrayList();
+        // Envolvemos la lista original dentro de un FilteredList (Lista filtrada)
+        listaFiltrada = new FilteredList<>(listaProductos, p -> true);
 
-        // Primero valida si la columna que van a usar no es nula, es decir, existe, para despues hacer la relacion
-        //Ya que en este mismo codigo tenemos programadas rodas las interfaces,entonces si no valida e intenta usar algo que no existe, el programa colapsaria
+        // Vinculamos cada columna de forma independiente
         if (colCodigo != null) {
             colCodigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
         }
@@ -421,80 +421,226 @@ public class Controller {
             colCaducidad.setCellValueFactory(new PropertyValueFactory<>("fechaCaducidad"));
         }
 
-        // Vinculamos la tabla
+        //Vinculamos la lista filtrada a las tablas
         if (tablaAbastecimiento != null) {
-            tablaAbastecimiento.setItems(listaProductos);
+            tablaAbastecimiento.setItems(listaFiltrada);
         } else if (tablaProductos != null) {
-            tablaProductos.setItems(listaProductos);
+            tablaProductos.setItems(listaFiltrada);
+        }
+        //Escucha lo que el usuario ingresa en la barra de búsqueda
+        if (barraBusqueda != null) {
+            barraBusqueda.textProperty().addListener((observable, oldValue, newValue) -> {
+                filtrarProductos(newValue);
+            });
         }
 
+        //Escucha cuándo el usuario selecciona una fila de la tabla
+        if (tablaProductos != null) {
+            tablaProductos.getSelectionModel().selectedItemProperty().addListener((observable, oldSelection, newSelection) -> {
+                if (newSelection != null) {
+                    productoSeleccionado = newSelection;
+                }
+            });
+        }
         // Carga los datos de MySQL en cuanto abre la ventana
         cargarProductosBD();
     }
 
+    // Método que realiza el filtro en tiempo real por Nombre o Código
+    private void filtrarProductos(String texto) {
+        if (listaFiltrada == null) return;
+
+        listaFiltrada.setPredicate(producto -> {
+            // Si la barra está vacía, mostramos todos los productos
+            if (texto == null || texto.trim().isEmpty()) {
+                return true;
+            }
+
+            String filtro = texto.toLowerCase().trim();
+
+            // Coincidencia por NOMBRE del producto
+            if (producto.getNombre() != null && producto.getNombre().toLowerCase().contains(filtro)) {
+                return true;
+            }
+
+            // Coincidencia por CÓDIGO del producto
+            if (String.valueOf(producto.getCodigo()).contains(filtro)) {
+                return true;
+            }
+
+            return false; // Si no coincide con nada, se oculta de la tabla
+        });
+    }
+
+    @FXML
+    public void buscarProducto(MouseEvent event) {
+        if (barraBusqueda != null) {
+            String texto = barraBusqueda.getText();
+            filtrarProductos(texto);
+        }
+    }
+
+    @FXML
+    public void actualizarProducto() {
+        if (productoSeleccionado == null) {
+            mostrarAlerta("Fallo al actualizar", "No ha seleccionado ningún producto de la tabla.");
+            return;
+        }
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Actualizar Producto");
+        dialog.setHeaderText("Editar información para: " + productoSeleccionado.getNombre());
+
+        ButtonType btnGuardar = new ButtonType("Guardar", ButtonBar.ButtonData.OK_DONE);
+        ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnGuardar, btnCancelar);
+
+        // Campos de texto precargados
+        TextField txtEditNombre = new TextField(productoSeleccionado.getNombre());
+        TextField txtEditCantidad = new TextField(String.valueOf(productoSeleccionado.getExistencia()));
+        TextField txtEditPrecio = new TextField(String.valueOf(productoSeleccionado.getPrecioVenta()));
+
+        // Selector de Fecha (DatePicker) precargado con la fecha actual del producto
+        DatePicker dpEditFecha = new DatePicker();
+        if (productoSeleccionado.getFechaCaducidad() != null && !productoSeleccionado.getFechaCaducidad().isEmpty()) {
+            try {
+                dpEditFecha.setValue(LocalDate.parse(productoSeleccionado.getFechaCaducidad()));
+            } catch (Exception e) {
+                // Si la fecha en BD tuviera un formato raro, la ignoramos para evitar que falle
+            }
+        }
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        grid.add(new Label("Nombre:"), 0, 0);
+        grid.add(txtEditNombre, 1, 0);
+        grid.add(new Label("Existencia:"), 0, 1);
+        grid.add(txtEditCantidad, 1, 1);
+        grid.add(new Label("Precio de Venta:"), 0, 2);
+        grid.add(txtEditPrecio, 1, 2);
+        grid.add(new Label("Fecha Caducidad:"), 0, 3);
+        grid.add(dpEditFecha, 1, 3); // Integramos el selector de fecha
+
+        dialog.getDialogPane().setContent(grid);
+
+        Optional<ButtonType> result = dialog.showAndWait();
+
+        if (result.isPresent() && result.get() == btnGuardar) {
+            String nombre = txtEditNombre.getText().trim();
+            String cantidadStr = txtEditCantidad.getText().trim();
+            String precioStr = txtEditPrecio.getText().trim();
+            LocalDate fechaSeleccionada = dpEditFecha.getValue();
+
+            // Validar que no dejen campos vacíos
+            if (nombre.isEmpty() || cantidadStr.isEmpty() || precioStr.isEmpty() || fechaSeleccionada == null) {
+                mostrarAlerta("Campos incompletos", "Por favor completa Nombre, Cantidad, Precio y Fecha de Caducidad.");
+                return;
+            }
+
+            try {
+                int existencia = Integer.parseInt(cantidadStr);
+                float precio = Float.parseFloat(precioStr);
+                String fechaFormatted = fechaSeleccionada.toString(); // Convierte automáticamente a "YYYY-MM-DD"
+
+                // Creamos el objeto Producto actualizado
+                Producto prodActualizado = new Producto(productoSeleccionado.getCodigo(), nombre, existencia, precio, fechaFormatted);
+
+                // Guardamos mediante el DAO
+                if (productoDAO.actualizar(prodActualizado)) {
+                    mostrarAlertaInfo("Éxito", "Producto actualizado correctamente.");
+                    cargarProductosBD(); // Recarga la tabla de JavaFX
+                } else {
+                    mostrarAlerta("Error", "No se pudo actualizar el producto en la base de datos.");
+                }
+
+            } catch (NumberFormatException e) {
+                mostrarAlerta("Formato incorrecto", "La cantidad debe ser entero y el precio decimal.");
+            }
+        }
+    }
+
+    @FXML
+    public void eliminarProducto() {
+        // 1. Validar que exista un producto seleccionado
+        if (productoSeleccionado == null) {
+            mostrarAlerta("Sin selección", "Por favor, selecciona un producto de la tabla para eliminar.");
+            return;
+        }
+
+        // 2. Ventana emergente de confirmación
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Confirmar eliminación");
+        confirmacion.setHeaderText(null);
+        confirmacion.setContentText("¿Estás seguro de que deseas eliminar el producto '" + productoSeleccionado.getNombre() + "'?");
+
+        java.util.Optional<ButtonType> resultado = confirmacion.showAndWait();
+
+        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+            String sql = "DELETE FROM producto WHERE codigo = ?";
+
+            try {
+                Connection cn = ConexionBD.getInstancia().getConexion();
+                try (PreparedStatement ps = cn.prepareStatement(sql)) {
+                    ps.setInt(1, productoSeleccionado.getCodigo());
+
+                    int filasAfectadas = ps.executeUpdate();
+
+                    if (filasAfectadas > 0) {
+                        mostrarAlertaInfo("Éxito", "Producto eliminado de la base de datos.");
+                        limpiarCampos();
+                        cargarProductosBD(); // Recargar la tabla
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                mostrarAlerta("Error de eliminación", "No se pudo eliminar el producto. Verifica que no tenga ventas vinculadas.");
+            }
+        }
+    }
+
     @FXML
     public void agregarProducto() {
-        // 1. Validamos que los campos obligatorios no estén vacíos
         if (txtNombre.getText().trim().isEmpty() ||
                 txtCantidad.getText().trim().isEmpty() ||
                 txtPrecio.getText().trim().isEmpty()) {
-            System.out.println("Por favor llena Nombre, Cantidad y Precio.");
+            mostrarAlerta("Campos incompletos", "Por favor llena Nombre, Cantidad y Precio.");
             return;
         }
 
         try {
-
-            //Definimos las variables
             String nombre = txtNombre.getText().trim();
             int existencia = Integer.parseInt(txtCantidad.getText().trim());
-            float precioVenta = Float.parseFloat(txtPrecio.getText().trim());
-            String fechaTexto = txtFecha.getText().trim(); // Espera: AAAA-MM-DD
+            float precio = Float.parseFloat(txtPrecio.getText().trim());
+            String fecha = (txtFecha != null) ? txtFecha.getText().trim() : "";
 
-            //Los signos de interrogacion como comodines usados por seguridad.
-            String sql = "INSERT INTO producto (nombre, existencia, precioVenta, fechaCaducidad) VALUES (?, ?, ?, ?)";
+            // Creamos el producto con 5 datos
+            Producto nuevoProducto = new Producto(0, nombre, existencia, precio, fecha);
 
-            try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/farmacia", "root", "");
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-                //pasamos los valores a los signos por orden
-                pstmt.setString(1, nombre);
-                pstmt.setInt(2, existencia);
-                pstmt.setFloat(3, precioVenta);
-
-                // Convertimos el texto a java.sql.Date si no está vacío
-                //Es decir, si el textField no esta vacio, lo que ingresamos en fecha lo transforma en cierto lenguaje que MySQL entiende y lo guarda
-                //Si esta vacio, simplemente guarda null para evitar errores
-                if (fechaTexto.isEmpty()) {
-                    pstmt.setNull(4, java.sql.Types.DATE);
-                } else {
-                    pstmt.setDate(4, java.sql.Date.valueOf(fechaTexto));
-                }
-
-                //Eso simplemente agrega el producto a la base de datos y agrega un nuevo renglon a la tabla
-                pstmt.executeUpdate();
-                System.out.println("¡Producto guardado exitosamente!");
-
-                // Limpiamos los campos
-                txtNombre.clear();
-                txtCantidad.clear();
-                txtPrecio.clear();
-                txtFecha.clear();
-
-                // Recargamos la tabla en tiempo real
-                cargarProductosBD();
+            // Guardamos mediante el DAO
+            if (productoDAO.insertar(nuevoProducto)) {
+                mostrarAlertaInfo("Éxito", "¡Producto guardado exitosamente!");
+                limpiarCampos();
+                cargarProductosBD(); // Recarga la tabla en la interfaz
+            } else {
+                mostrarAlerta("Error", "No se pudo guardar el producto en la base de datos.");
             }
 
         } catch (NumberFormatException e) {
-            // 1. PRIMERO atrapamos errores de conversion de números (letras en precio/cantidad)
-            System.out.println("Ingresa números válidos en Cantidad y Precio.");
-        } catch (IllegalArgumentException e) {
-            // 2. DESPUÉS atrapamos errores de formato de fecha
-            System.out.println("Error en la fecha: Recuerda usar el formato AAAA-MM-DD (ejemplo: 2026-12-31).");
-        } catch (SQLException e) {
-            // 3. POR ÚLTIMO errores de la base de datos
-            System.out.println("Error de SQL al guardar: " + e.getMessage());
+            mostrarAlerta("Formato incorrecto", "Por favor, ingresa números válidos en cantidad y precio.");
         }
     }
+
+    // Método auxiliar para pasar los datos del producto seleccionado a los campos de texto
+    private void cargarDatosEnCampos(Producto producto) {
+        if (txtCodigo != null) txtCodigo.setText(String.valueOf(producto.getCodigo()));
+        if (txtNombre != null) txtNombre.setText(producto.getNombre());
+        if (txtCantidad != null) txtCantidad.setText(String.valueOf(producto.getExistencia()));
+        if (txtPrecio != null) txtPrecio.setText(String.valueOf(producto.getPrecioVenta()));
+    }
+
 
     @FXML
     public void navRegresarPrincipal(MouseEvent event){
@@ -568,6 +714,23 @@ public class Controller {
     // Al parecer, siempre tiene que quedar hasta ABAJO del codigo
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+    // Limpia los campos de texto tras guardar, actualizar o eliminar
+    private void limpiarCampos() {
+        if (txtCodigo != null) txtCodigo.clear();
+        if (txtNombre != null) txtNombre.clear();
+        if (txtCantidad != null) txtCantidad.clear();
+        if (txtPrecio != null) txtPrecio.clear();
+        if (txtFecha != null) txtFecha.clear();
+        productoSeleccionado = null; // Reiniciamos la selección
+    }
+    // Muestra mensajes de éxito / información al usuario
+    private void mostrarAlertaInfo(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
