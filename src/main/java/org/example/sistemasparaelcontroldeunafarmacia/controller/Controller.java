@@ -4,6 +4,7 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -16,7 +17,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import org.example.sistemasparaelcontroldeunafarmacia.dao.ClienteDAO;
 import org.example.sistemasparaelcontroldeunafarmacia.dao.ProductoDAO;
+import org.example.sistemasparaelcontroldeunafarmacia.model.Cliente;
 import org.example.sistemasparaelcontroldeunafarmacia.model.Producto;
 
 import java.sql.*;
@@ -106,6 +109,35 @@ public class Controller {
     @FXML private TableColumn<Producto, String> colNombre;
 
     @FXML private TableColumn<Producto, Integer> colExistencia;
+
+    //Tabla Clientes
+    @FXML private TableView<Cliente> tablaClientes;
+
+    @FXML private TableColumn<Cliente, Integer> colClienteCodigo;
+
+    @FXML private TableColumn<Cliente, String> colClienteNombre;
+
+    @FXML private TableColumn<Cliente, String> colClienteDireccion;
+
+    @FXML private TableColumn<Cliente, String> colClienteRFC;
+
+    @FXML private TableColumn<Cliente, String> colClienteTelefono;
+
+    @FXML private TextField txtCliNombre;
+
+    @FXML private TextField txtCliDireccion;
+
+    @FXML private TextField txtCliRFC;
+
+    @FXML private TextField txtCliTelefono;
+
+    private ObservableList<Cliente> listaClientes;
+
+    private ClienteDAO clienteDAO;
+
+    private Cliente clienteSeleccionado;
+
+
 
     // Esta lista especial es la que actualizará la tabla en tiempo real
     private ObservableList<Producto> listaProductos;
@@ -444,6 +476,25 @@ public class Controller {
         }
         // Carga los datos de MySQL en cuanto abre la ventana
         cargarProductosBD();
+
+
+        //FALTA REVISAR
+        clienteDAO = new ClienteDAO();
+        listaClientes = FXCollections.observableArrayList();
+
+        if (colClienteCodigo != null) colClienteCodigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
+        if (colClienteNombre != null) colClienteNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        if (colClienteDireccion != null) colClienteDireccion.setCellValueFactory(new PropertyValueFactory<>("direccion"));
+        if (colClienteRFC != null) colClienteRFC.setCellValueFactory(new PropertyValueFactory<>("rfc"));
+        if (colClienteTelefono != null) colClienteTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
+
+        if (tablaClientes != null) {
+            tablaClientes.setItems(listaClientes);
+            tablaClientes.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+                if (newSel != null) clienteSeleccionado = newSel;
+            });
+        }
+        cargarClientesBD();
     }
 
     // Método que realiza el filtro en tiempo real por Nombre o Código
@@ -735,5 +786,40 @@ public class Controller {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+
+    public void cargarClientesBD() {
+        if (listaClientes == null) return;
+        listaClientes.clear();
+        List<Cliente> clientesBD = clienteDAO.listar();
+        listaClientes.addAll(clientesBD);
+    }
+
+    @FXML
+    public void agregarCliente() {
+        if (txtCliNombre.getText().trim().isEmpty() ||
+                txtCliDireccion.getText().trim().isEmpty() ||
+                txtCliTelefono.getText().trim().isEmpty()) {
+            mostrarAlerta("Campos incompletos", "Por favor llena Nombre, Dirección y Teléfono.");
+            return;
+        }
+
+        String nombre = txtCliNombre.getText().trim();
+        String direccion = txtCliDireccion.getText().trim();
+        String rfc = (txtCliRFC != null) ? txtCliRFC.getText().trim() : "";
+        String telefono = txtCliTelefono.getText().trim();
+
+        Cliente nuevoCliente = new Cliente(0, nombre, direccion, rfc, telefono);
+
+        if (clienteDAO.insertar(nuevoCliente)) {
+            mostrarAlertaInfo("Éxito", "¡Cliente guardado exitosamente!");
+            if (txtCliNombre != null) txtCliNombre.clear();
+            if (txtCliDireccion != null) txtCliDireccion.clear();
+            if (txtCliRFC != null) txtCliRFC.clear();
+            if (txtCliTelefono != null) txtCliTelefono.clear();
+            cargarClientesBD();
+        } else {
+            mostrarAlerta("Error", "No se pudo guardar el cliente en la base de datos.");
+        }
     }
 }
