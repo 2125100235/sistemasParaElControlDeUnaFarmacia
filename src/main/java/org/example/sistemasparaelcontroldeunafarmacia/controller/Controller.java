@@ -89,54 +89,81 @@ public class Controller {
     @FXML
     private FilteredList<Producto> listaFiltrada;
 
+    @FXML
+    private TextField barraBusquedaClientes;
+
+    @FXML
+    private FontAwesomeIconView btnBuscarClientes;
+
+    @FXML
+    private FilteredList<Cliente> listaFiltradaClientes;
     //Tabla productos
-    @FXML private TextField txtCodigo;
+    @FXML
+    private TextField txtCodigo;
 
-    @FXML private TextField txtNombre;
+    @FXML
+    private TextField txtNombre;
 
-    @FXML private TextField txtCantidad;
+    @FXML
+    private TextField txtCantidad;
 
-    @FXML private TextField txtPrecio;
+    @FXML
+    private TextField txtPrecio;
 
-    @FXML private TextField txtFecha;
+    @FXML
+    private TextField txtFecha;
 
-    @FXML private Button btnNuevoProducto;
+    @FXML
+    private Button btnNuevoProducto;
 
-    @FXML private TableView<Producto> tablaAbastecimiento;
+    @FXML
+    private TableView<Producto> tablaAbastecimiento;
 
-    @FXML private TableColumn<Producto, Integer> colCodigo;
+    @FXML
+    private TableColumn<Producto, Integer> colCodigo;
 
-    @FXML private TableColumn<Producto, String> colNombre;
+    @FXML
+    private TableColumn<Producto, String> colNombre;
 
-    @FXML private TableColumn<Producto, Integer> colExistencia;
+    @FXML
+    private TableColumn<Producto, Integer> colExistencia;
 
     //Tabla Clientes
-    @FXML private TableView<Cliente> tablaClientes;
+    @FXML
+    private TableView<Cliente> tablaClientes;
 
-    @FXML private TableColumn<Cliente, Integer> colClienteCodigo;
+    @FXML
+    private TableColumn<Cliente, Integer> colClienteCodigo;
 
-    @FXML private TableColumn<Cliente, String> colClienteNombre;
+    @FXML
+    private TableColumn<Cliente, String> colClienteNombre;
 
-    @FXML private TableColumn<Cliente, String> colClienteDireccion;
+    @FXML
+    private TableColumn<Cliente, String> colClienteDireccion;
 
-    @FXML private TableColumn<Cliente, String> colClienteRFC;
+    @FXML
+    private TableColumn<Cliente, String> colClienteRFC;
 
-    @FXML private TableColumn<Cliente, String> colClienteTelefono;
+    @FXML
+    private TableColumn<Cliente, String> colClienteTelefono;
 
-    @FXML private TextField txtCliNombre;
+    @FXML
+    private TextField txtCliNombre;
 
-    @FXML private TextField txtCliDireccion;
+    @FXML
+    private TextField txtCliDireccion;
 
-    @FXML private TextField txtCliRFC;
+    @FXML
+    private TextField txtCliRFC;
 
-    @FXML private TextField txtCliTelefono;
+    @FXML
+    private TextField txtCliTelefono;
 
     private ObservableList<Cliente> listaClientes;
 
     private ClienteDAO clienteDAO;
 
     private Cliente clienteSeleccionado;
-
 
 
     // Esta lista especial es la que actualizará la tabla en tiempo real
@@ -212,10 +239,10 @@ public class Controller {
     private ProductoDAO productoDAO;
     private Producto productoSeleccionado;
 
- //Método principal para la navegación entre ventanas, se utiliza de forma universal para toda la navegación, por botón se le pasan los parámetros de la URL de la ventana hacia la que va y el evento desde el cuál fue accionado (el botón)
+    //Método principal para la navegación entre ventanas, se utiliza de forma universal para toda la navegación, por botón se le pasan los parámetros de la URL de la ventana hacia la que va y el evento desde el cuál fue accionado (el botón)
     @FXML
-    private void navegacion(String ruta,MouseEvent event) {
-        try{
+    private void navegacion(String ruta, MouseEvent event) {
+        try {
             //Busca archivo FXML
             URL url = getClass().getResource(ruta);
             //Carga la URL
@@ -229,14 +256,14 @@ public class Controller {
             //Intercambio entre ventanas
             ventanaActual.setScene(scene);
             ventanaActual.show();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     //Navegacion entre ventanas, se le pasan los parámetros de URL y evento al método de navegación
     @FXML
-    public void navPrincipal(MouseEvent event){
+    public void navPrincipal(MouseEvent event) {
         if (txtCorreo != null && txtClave != null) {
 
             //Lee los datos ingresados y el correo lo hace todo minusculas para evitar errores
@@ -287,7 +314,7 @@ public class Controller {
     }
 
     @FXML
-    public void navRegistro(MouseEvent event){
+    public void navRegistro(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/registro.fxml", event);
     }
 
@@ -307,8 +334,8 @@ public class Controller {
             return;
         }
         // Como parte de lo anterior, validamos que el correo tenga el uso de arroba
-        if (!correo.contains("@")){
-            mostrarAlerta("Correo invalido","El correo tiene que contener un arroba.");
+        if (!correo.contains("@")) {
+            mostrarAlerta("Correo invalido", "El correo tiene que contener un arroba.");
             return;
         }
         // 3. Consulta SQL para insertar el nuevo empleado (por defecto le asignamos puesto 'cajero')
@@ -481,21 +508,66 @@ public class Controller {
         //FALTA REVISAR
         clienteDAO = new ClienteDAO();
         listaClientes = FXCollections.observableArrayList();
+        // Envolvemos la lista original dentro de un FilteredList (Lista filtrada)
+        listaFiltradaClientes = new FilteredList<>(listaClientes, p -> true);
 
         if (colClienteCodigo != null) colClienteCodigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
         if (colClienteNombre != null) colClienteNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        if (colClienteDireccion != null) colClienteDireccion.setCellValueFactory(new PropertyValueFactory<>("direccion"));
+        if (colClienteDireccion != null)
+            colClienteDireccion.setCellValueFactory(new PropertyValueFactory<>("direccion"));
         if (colClienteRFC != null) colClienteRFC.setCellValueFactory(new PropertyValueFactory<>("rfc"));
         if (colClienteTelefono != null) colClienteTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
 
         if (tablaClientes != null) {
-            tablaClientes.setItems(listaClientes);
+            tablaClientes.setItems(listaFiltradaClientes);
             tablaClientes.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
                 if (newSel != null) clienteSeleccionado = newSel;
             });
         }
+
+        //Escucha lo que el usuario ingresa en la barra de búsqueda de los clientes
+        if (barraBusquedaClientes != null) {
+            barraBusquedaClientes.textProperty().addListener((observable, oldValue, newValue) -> {
+                filtrarClientes(newValue);
+            });
+        }
         cargarClientesBD();
     }
+
+    // Método que realiza el filtro en tiempo real por Nombre o Código de los clientes
+    private void filtrarClientes(String texto) {
+        if (listaFiltradaClientes == null) return;
+
+        listaFiltradaClientes.setPredicate(cliente -> {
+            // Si la barra está vacía, mostramos todos los productos
+            if (texto == null || texto.trim().isEmpty()) {
+                return true;
+            }
+
+            String filtro = texto.toLowerCase().trim();
+
+            // Coincidencia por NOMBRE del producto
+            if (cliente.getNombre() != null && cliente.getNombre().toLowerCase().contains(filtro)) {
+                return true;
+            }
+
+            // Coincidencia por CÓDIGO del cliente
+            if (String.valueOf(cliente.getCodigo()).contains(filtro)) {
+                return true;
+            }
+
+            return false; // Si no coincide con nada, se oculta de la tabla
+        });
+    }
+
+    @FXML
+    public void buscarClientes(MouseEvent event) {
+        if (barraBusquedaClientes != null) {
+            String texto = barraBusquedaClientes.getText();
+            filtrarClientes(texto);
+        }
+    }
+
 
     // Método que realiza el filtro en tiempo real por Nombre o Código
     private void filtrarProductos(String texto) {
@@ -537,7 +609,7 @@ public class Controller {
             mostrarAlerta("Fallo al actualizar", "No ha seleccionado ningún producto de la tabla.");
             return;
         }
-
+        // Todo se muestra dentro de un dialog (que es una ventana emergente que nos permite ingresar campos, esto no se puede editar en SceneBuilder, es únicamente código.
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Actualizar Producto");
         dialog.setHeaderText("Editar información para: " + productoSeleccionado.getNombre());
@@ -615,7 +687,7 @@ public class Controller {
 
     @FXML
     public void eliminarProducto() {
-        // 1. Validar que exista un producto seleccionado
+        // 1. Validar que exista un producto seleccionado en la tabla
         if (productoSeleccionado == null) {
             mostrarAlerta("Sin selección", "Por favor, selecciona un producto de la tabla para eliminar.");
             return;
@@ -627,27 +699,16 @@ public class Controller {
         confirmacion.setHeaderText(null);
         confirmacion.setContentText("¿Estás seguro de que deseas eliminar el producto '" + productoSeleccionado.getNombre() + "'?");
 
-        java.util.Optional<ButtonType> resultado = confirmacion.showAndWait();
+        Optional<ButtonType> resultado = confirmacion.showAndWait();
 
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-            String sql = "DELETE FROM producto WHERE codigo = ?";
-
-            try {
-                Connection cn = ConexionBD.getInstancia().getConexion();
-                try (PreparedStatement ps = cn.prepareStatement(sql)) {
-                    ps.setInt(1, productoSeleccionado.getCodigo());
-
-                    int filasAfectadas = ps.executeUpdate();
-
-                    if (filasAfectadas > 0) {
-                        mostrarAlertaInfo("Éxito", "Producto eliminado de la base de datos.");
-                        limpiarCampos();
-                        cargarProductosBD(); // Recargar la tabla
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                mostrarAlerta("Error de eliminación", "No se pudo eliminar el producto. Verifica que no tenga ventas vinculadas.");
+            // 3. Delegamos la eliminación a la capa DAO
+            if (productoDAO.eliminar(productoSeleccionado.getCodigo())) {
+                mostrarAlertaInfo("Éxito", "Producto eliminado correctamente.");
+                limpiarCampos();
+                cargarProductosBD(); // Recarga la lista y la tabla
+            } else {
+                mostrarAlerta("Error de eliminación", "No se pudo eliminar el producto. Verifica que no tenga registros o ventas vinculadas.");
             }
         }
     }
@@ -694,7 +755,7 @@ public class Controller {
 
 
     @FXML
-    public void navRegresarPrincipal(MouseEvent event){
+    public void navRegresarPrincipal(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/principal.fxml", event);
     }
 
@@ -742,10 +803,12 @@ public class Controller {
     public void navAyuda(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/ayuda.fxml", event);
     }
+
     @FXML
     public void navNuevoProducto(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/nuevoProducto.fxml", event);
     }
+
     @FXML
     public void navRegresarProductosMenu(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/productosMenu.fxml", event);
@@ -755,6 +818,7 @@ public class Controller {
     public void navNuevoCliente(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/nuevoCliente.fxml", event);
     }
+
     @FXML
     public void navRegresarClientesMenu(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/clientesMenu.fxml", event);
@@ -770,6 +834,7 @@ public class Controller {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
+
     // Limpia los campos de texto tras guardar, actualizar o eliminar
     private void limpiarCampos() {
         if (txtCodigo != null) txtCodigo.clear();
@@ -779,6 +844,7 @@ public class Controller {
         if (txtFecha != null) txtFecha.clear();
         productoSeleccionado = null; // Reiniciamos la selección
     }
+
     // Muestra mensajes de éxito / información al usuario
     private void mostrarAlertaInfo(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -820,6 +886,101 @@ public class Controller {
             cargarClientesBD();
         } else {
             mostrarAlerta("Error", "No se pudo guardar el cliente en la base de datos.");
+        }
+    }
+    @FXML
+    public void eliminarCliente() {
+        // 1. Validar que exista un producto seleccionado en la tabla
+        if (clienteSeleccionado == null) {
+            mostrarAlerta("Sin selección", "Por favor, selecciona un cliente de la tabla para eliminar.");
+            return;
+        }
+
+        // 2. Ventana emergente de confirmación
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Confirmar eliminación");
+        confirmacion.setHeaderText(null);
+        confirmacion.setContentText("¿Estás seguro de que deseas eliminar a '" + clienteSeleccionado.getNombre() + "'?");
+
+        Optional<ButtonType> resultado = confirmacion.showAndWait();
+
+        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+            // 3. Delegamos la eliminación a la capa DAO
+            if (clienteDAO.eliminar(clienteSeleccionado.getCodigo())) {
+                mostrarAlertaInfo("Éxito", "Cliente eliminado correctamente.");
+                limpiarCampos();
+                cargarClientesBD(); // Recarga la lista y la tabla
+            } else {
+                mostrarAlerta("Error de eliminación", "No se pudo eliminar el cliente. Verifica que este relacionado a alguna venta.");
+            }
+        }
+    }
+
+    @FXML
+    public void actualizarCliente() {
+        if (clienteSeleccionado == null) {
+            mostrarAlerta("Fallo al actualizar", "No ha seleccionado ningún cliente de la tabla.");
+            return;
+        }
+        // Todo se muestra dentro de un dialog (que es una ventana emergente que nos permite ingresar campos, esto no se puede editar en SceneBuilder, es únicamente código.
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Actualizar Cliente");
+        dialog.setHeaderText("Editar información para: " + clienteSeleccionado.getNombre());
+
+        ButtonType btnGuardar = new ButtonType("Guardar", ButtonBar.ButtonData.OK_DONE);
+        ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnGuardar, btnCancelar);
+
+        // Campos de texto precargados
+        TextField txtEditNombre = new TextField(clienteSeleccionado.getNombre());
+        TextField txtEditDireccion = new TextField(clienteSeleccionado.getDireccion());
+        TextField txtEditRfc = new TextField(clienteSeleccionado.getRfc());
+        TextField txtEditTelefono = new TextField(clienteSeleccionado.getTelefono());
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        grid.add(new Label("Nombre:"), 0, 0);
+        grid.add(txtEditNombre, 1, 0);
+        grid.add(new Label("Direccion:"), 0, 1);
+        grid.add(txtEditDireccion, 1, 1);
+        grid.add(new Label("RFC:"), 0, 2);
+        grid.add(txtEditRfc, 1, 2);
+        grid.add(new Label("Telefono:"), 0, 3);
+        grid.add(txtEditTelefono, 1, 3);
+        dialog.getDialogPane().setContent(grid);
+
+        Optional<ButtonType> result = dialog.showAndWait();
+
+        if (result.isPresent() && result.get() == btnGuardar) {
+            String nombre = txtEditNombre.getText().trim();
+            String direccion = txtEditDireccion.getText().trim();
+            String rfc = txtEditRfc.getText().trim();
+            String telefono = txtEditTelefono.getText().trim();
+
+            // Validar que no dejen campos vacíos
+            if (nombre.isEmpty() || direccion.isEmpty() || rfc.isEmpty() || telefono == null) {
+                mostrarAlerta("Campos incompletos", "Por favor completa todos los campos.");
+                return;
+            }
+
+            try {
+                // Creamos el objeto del cliente actualizado
+                Cliente clienteActualizado = new Cliente(clienteSeleccionado.getCodigo(), nombre, direccion, rfc, telefono);
+
+                // Guardamos mediante el DAO
+                if (clienteDAO.actualizar(clienteActualizado)) {
+                    mostrarAlertaInfo("Éxito", "Cliente actualizado correctamente.");
+                    cargarClientesBD(); // Recarga la tabla de JavaFX
+                } else {
+                    mostrarAlerta("Error", "No se pudo actualizar el cliente en la base de datos.");
+                }
+
+            } catch (Exception e) {
+                mostrarAlerta("Error", "Hubo un error al actualizar el cliente, revise bien los campos y vuelva a intentarlo.");
+            }
         }
     }
 }

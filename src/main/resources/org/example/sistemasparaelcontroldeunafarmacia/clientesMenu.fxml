@@ -40,8 +40,8 @@
                   </HBox>
                   <HBox fx:id="contenedorBuscador" alignment="CENTER" maxWidth="-Infinity" prefHeight="28.0" prefWidth="557.0" styleClass="contenedorBuscador" VBox.vgrow="ALWAYS">
                      <children>
-                        <TextField alignment="TOP_LEFT" minHeight="-Infinity" minWidth="-Infinity" prefHeight="41.0" prefWidth="528.0" styleClass="campoBuscador" HBox.hgrow="ALWAYS" />
-                        <FontAwesomeIconView glyphName="SEARCH" size="25" strokeType="INSIDE">
+                        <TextField fx:id="barraBusquedaClientes" alignment="TOP_LEFT" minHeight="-Infinity" minWidth="-Infinity" prefHeight="41.0" prefWidth="528.0" styleClass="campoBuscador" HBox.hgrow="ALWAYS" />
+                        <FontAwesomeIconView fx:id="btnBuscarClientes" glyphName="SEARCH" onMouseClicked="#buscarClientes" size="25" strokeType="INSIDE">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
@@ -75,8 +75,8 @@
          <children>
             <Button fx:id="btnProductosRegresarPrincipal" mnemonicParsing="false" onMouseClicked="#navRegresarPrincipal" styleClass="botonNormal" text="Menú principal" textAlignment="CENTER" />
             <Button fx:id="btnNuevoCliente" mnemonicParsing="false" onMouseClicked="#navNuevoCliente" styleClass="botonNormal" text="Añadir" textAlignment="CENTER" />
-            <Button fx:id="btnActualizarProducto" mnemonicParsing="false" styleClass="botonNormal" text="Actualizar" textAlignment="CENTER" />
-            <Button fx:id="btnEliminarProducto" mnemonicParsing="false" styleClass="botonNormal" text="Eliminar" textAlignment="CENTER" />
+            <Button fx:id="btnActualizarProducto" mnemonicParsing="false" onMouseClicked="#actualizarCliente" styleClass="botonNormal" text="Actualizar" textAlignment="CENTER" />
+            <Button fx:id="btnEliminarProducto" mnemonicParsing="false" onMouseClicked="#eliminarCliente" styleClass="botonNormal" text="Eliminar" textAlignment="CENTER" />
          </children>
       </HBox>
       <HBox alignment="BOTTOM_RIGHT" prefHeight="108.0" prefWidth="960.0">
