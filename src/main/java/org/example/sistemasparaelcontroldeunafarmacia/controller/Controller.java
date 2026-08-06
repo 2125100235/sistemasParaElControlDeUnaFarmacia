@@ -5,6 +5,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.Event;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -21,10 +23,14 @@ import org.example.sistemasparaelcontroldeunafarmacia.dao.ClienteDAO;
 import org.example.sistemasparaelcontroldeunafarmacia.dao.ProductoDAO;
 import org.example.sistemasparaelcontroldeunafarmacia.model.Cliente;
 import org.example.sistemasparaelcontroldeunafarmacia.model.Producto;
+import org.example.sistemasparaelcontroldeunafarmacia.dao.ProductoDAO;
+import org.example.sistemasparaelcontroldeunafarmacia.model.Producto;
+import javafx.scene.control.Alert;
 
 import java.sql.*;
 
 import org.example.sistemasparaelcontroldeunafarmacia.db.ConexionBD;
+import org.example.sistemasparaelcontroldeunafarmacia.model.ProductoVenta;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -32,6 +38,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class Controller {
+
+    private final ProductoDAO productoDAO = new ProductoDAO();
+    private Producto productoSeleccionado = null;
 
     //Campos para el inicio de sesion nombre y Apellido
     @FXML
@@ -115,6 +124,9 @@ public class Controller {
 
     @FXML
     private Button btnNuevoProducto;
+
+    @FXML
+    private Label lblTotal;
 
     @FXML
     private TableView<Producto> tablaAbastecimiento;
@@ -230,18 +242,46 @@ public class Controller {
     @FXML
     private Button btnNuevoProductoRegresarProductos;
 
+    private final ObservableList<ProductoVenta> listaVentas = FXCollections.observableArrayList();
+
+    //CONTROL DE VENTAS
+    @FXML private TextField barraBusquedaVentas;
+
+    @FXML private TextField txtPrecioVentas;
+
+    @FXML private TextField txtCantidadVentas;
+
+    @FXML private Label lblTotalVentas;
+
+    @FXML private Button btnRegistrarVentas;
+
+    @FXML private Button btnMenuRegistroVentas;
+
+    @FXML private Button btnMenuPrincipalVentas;
+
+    @FXML private FontAwesomeIconView btnAyudaVentas;
+
+    @FXML private FontAwesomeIconView btnBuscarVentas;
+
+    @FXML private FontAwesomeIconView btnUsuarioVentas;
+
+    @FXML private TableView<ProductoVenta> tablaVentas;
+
+    @FXML private TableColumn<ProductoVenta, String> colProductoVentas;
+
+    @FXML private TableColumn<ProductoVenta, Integer> colCantidadVentas;
+
+    @FXML private TableColumn<ProductoVenta, Double> colPrecioVentas;
+
     //ClientesMenu
     @FXML
     private Button btnNuevoCliente;
     @FXML
     private Button btnNuevoClienteRegresarClientes;
-    //Acciones en BD
-    private ProductoDAO productoDAO;
-    private Producto productoSeleccionado;
 
     //Método principal para la navegación entre ventanas, se utiliza de forma universal para toda la navegación, por botón se le pasan los parámetros de la URL de la ventana hacia la que va y el evento desde el cuál fue accionado (el botón)
     @FXML
-    private void navegacion(String ruta, MouseEvent event) {
+    private void navegacion(String ruta, Event event) {
         try {
             //Busca archivo FXML
             URL url = getClass().getResource(ruta);
@@ -458,7 +498,6 @@ public class Controller {
 
     @FXML
     public void initialize() {
-        productoDAO = new ProductoDAO();
         listaProductos = FXCollections.observableArrayList();
         // Envolvemos la lista original dentro de un FilteredList (Lista filtrada)
         listaFiltrada = new FilteredList<>(listaProductos, p -> true);
@@ -532,6 +571,14 @@ public class Controller {
             });
         }
         cargarClientesBD();
+
+        if (tablaVentas != null) {
+            colProductoVentas.setCellValueFactory(new PropertyValueFactory<>("producto"));
+            colCantidadVentas.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+            colPrecioVentas.setCellValueFactory(new PropertyValueFactory<>("precio"));
+
+            tablaVentas.setItems(listaVentas);
+        }
     }
 
     // Método que realiza el filtro en tiempo real por Nombre o Código de los clientes
@@ -824,6 +871,20 @@ public class Controller {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/clientesMenu.fxml", event);
     }
 
+    @FXML
+    public void navControlVentas(MouseEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/controlVentas.fxml", event);
+    }
+
+    @FXML
+    public void navMenuRegistro(ActionEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/registroMenu.fxml", event);
+    }
+
+    @FXML
+    public void navMenuPrincipal(ActionEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/principal.fxml", event);
+    }
 
     //Este metodo se estará reutilizando al momento de que queramos mostrar un error.
     // Al parecer, siempre tiene que quedar hasta ABAJO del codigo
@@ -859,6 +920,93 @@ public class Controller {
         listaClientes.clear();
         List<Cliente> clientesBD = clienteDAO.listar();
         listaClientes.addAll(clientesBD);
+    }
+
+    @FXML
+    private void buscarProductoVentas(MouseEvent event) {
+        String busqueda = barraBusquedaVentas.getText().trim();
+
+        if (busqueda.isEmpty()) {
+            mostrarAlerta("Campos vacíos", "Por favor ingresa un nombre o código de producto.");
+            return;
+        }
+
+        // Búsqueda real en la base de datos
+        productoSeleccionado = productoDAO.buscarPorNombreOCodigo(busqueda);
+
+        if (productoSeleccionado != null) {
+            txtPrecioVentas.setText(String.format("$%.2f", productoSeleccionado.getPrecioVenta()));
+            txtCantidadVentas.setText("1");
+        } else {
+            txtPrecioVentas.clear();
+            mostrarAlerta("No encontrado", "El producto '" + busqueda + "' no existe en el inventario.");
+        }
+    }
+
+    @FXML
+    private void registrarProductoVentas(ActionEvent event) {
+        if (productoSeleccionado == null) {
+            mostrarAlerta("Atención", "Primero debes buscar y seleccionar un producto válido.");
+            return;
+        }
+
+        try {
+            int cantidadSolicitada = Integer.parseInt(txtCantidadVentas.getText().trim());
+
+            if (cantidadSolicitada <= 0) {
+                mostrarAlerta("Cantidad inválida", "La cantidad debe ser mayor a 0.");
+                return;
+            }
+
+            // Validación de Stock
+            if (cantidadSolicitada > productoSeleccionado.getExistencia()) {
+                mostrarAlerta("Stock insuficiente", "Solo quedan " + productoSeleccionado.getExistencia() + " unidades de " + productoSeleccionado.getNombre());
+                return;
+            }
+
+            // Agrega el producto a la tabla
+            listaVentas.add(new ProductoVenta(
+                    productoSeleccionado.getNombre(),
+                    cantidadSolicitada,
+                    productoSeleccionado.getPrecioVenta()
+            ));
+
+            // ACTUALIZA EL TOTAL EN PANTALLA (AQUÍ)
+            actualizarTotal();
+
+            // Limpiar para la siguiente búsqueda
+            barraBusquedaVentas.clear();
+            txtPrecioVentas.clear();
+            txtCantidadVentas.clear();
+            productoSeleccionado = null;
+
+        } catch (NumberFormatException e) {
+            mostrarAlerta("Error", "Ingresa una cantidad numérica válida.");
+        }
+    }
+
+
+    private void actualizarTotalVentas() {
+        double sumaTotal = 0.0;
+        for (ProductoVenta item : listaVentas) {
+            sumaTotal += item.getSubtotal();
+        }
+        lblTotalVentas.setText(String.format("$%.2f", sumaTotal));
+    }
+
+    private void actualizarTotal() {
+        double subtotal = 0.0;
+
+        // Sumamos (precio * cantidad) de cada producto en la tabla
+        for (ProductoVenta p : listaVentas) {
+            subtotal += p.getPrecio() * p.getCantidad();
+        }
+
+        // Calculamos el total con el 16% de IVA
+        double totalConIVA = subtotal * 1.16;
+
+        // Formateamos a dos decimales y lo mostramos en la pantalla
+        lblTotal.setText(String.format("$%.2f", totalConIVA));
     }
 
     @FXML

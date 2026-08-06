@@ -120,4 +120,39 @@ public class ProductoDAO {
             return false;
         }
     }
+    public Producto buscarPorNombreOCodigo(String busqueda) {
+        String sql = "SELECT * FROM producto WHERE codigo = ? OR nombre LIKE ?";
+
+        try {
+            Connection conn = ConexionBD.getInstancia().getConexion();
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
+                int codigo = -1;
+                try {
+                    codigo = Integer.parseInt(busqueda);
+                } catch (NumberFormatException ignored) {
+                    // Si el texto no es número, ignora y busca solo por nombre
+                }
+
+                ps.setInt(1, codigo);
+                ps.setString(2, "%" + busqueda + "%");
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return new Producto(
+                                rs.getInt("codigo"),
+                                rs.getString("nombre"),
+                                rs.getInt("existencia"),
+                                rs.getFloat("precioVenta"),
+                                rs.getString("fechaCaducidad")
+                        );
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al buscar producto: " + e.getMessage());
+        }
+
+        return null;
+    }
 }
