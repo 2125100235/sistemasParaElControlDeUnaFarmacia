@@ -13,20 +13,16 @@ public class ConexionBD {
     private static final String USUARIO = "root";
     private static final String PASSWORD = "";
 
-
-    //Constructor privado para evitar crear objetos.
+    // Constructor privado que registra el driver de MySQL una sola vez
     private ConexionBD() {
-        try{
-            conexion = DriverManager.getConnection(URL,USUARIO,PASSWORD);
-            System.out.println("Conexión exitosa!");
-        }
-        catch (SQLException e){
-            System.out.println("Error de conexión: " + e.getMessage());
+        try {
+            Class.forName(DRIVER);
+        } catch (ClassNotFoundException e) {
+            System.out.println("Error al cargar el driver JDBC: " + e.getMessage());
         }
     }
 
-
-    // Metodo estatico para obtener un solo objeto de esta clase
+    // Método estático para obtener un solo objeto de esta clase (Singleton)
     public static ConexionBD getInstancia() {
         if (instancia == null) {
             instancia = new ConexionBD();
@@ -34,16 +30,16 @@ public class ConexionBD {
         return instancia;
     }
 
-
-    // Metodo público para obtener la conexion
+    // Método público para obtener la conexión (valida si está nula o cerrada)
     public Connection getConexion() {
-        if (conexion == null) {
-            try {
-                Class.forName(DRIVER);
-            } catch (ClassNotFoundException e) { }
+        try {
+            if (conexion == null || conexion.isClosed()) {
+                conexion = DriverManager.getConnection(URL2, USUARIO, PASSWORD);
+                System.out.println("Conexión activa obtenida correctamente.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error de conexión: " + e.getMessage());
         }
         return conexion;
     }
-
-
 }

@@ -7,7 +7,6 @@ import javafx.collections.transformation.FilteredList;
 import javafx.event.Event;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -19,18 +18,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import org.example.sistemasparaelcontroldeunafarmacia.dao.ClienteDAO;
-import org.example.sistemasparaelcontroldeunafarmacia.dao.ProductoDAO;
-import org.example.sistemasparaelcontroldeunafarmacia.model.Cliente;
-import org.example.sistemasparaelcontroldeunafarmacia.model.Producto;
-import org.example.sistemasparaelcontroldeunafarmacia.dao.ProductoDAO;
-import org.example.sistemasparaelcontroldeunafarmacia.model.Producto;
+import org.example.sistemasparaelcontroldeunafarmacia.dao.*;
+import org.example.sistemasparaelcontroldeunafarmacia.model.*;
 import javafx.scene.control.Alert;
 
 import java.sql.*;
-
-import org.example.sistemasparaelcontroldeunafarmacia.db.ConexionBD;
-import org.example.sistemasparaelcontroldeunafarmacia.model.ProductoVenta;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -69,6 +61,7 @@ public class Controller {
     @FXML
     private TextField txtRegTelefono;
 
+    private final EmpleadoDAO empleadoDAO = new EmpleadoDAO();
 
     //Campos para reestablecer contraseña
     //Autorizacion de admin
@@ -259,6 +252,8 @@ public class Controller {
 
     @FXML private Button btnMenuPrincipalVentas;
 
+    @FXML private Button btnFinalizarVenta;
+
     @FXML private FontAwesomeIconView btnAyudaVentas;
 
     @FXML private FontAwesomeIconView btnBuscarVentas;
@@ -272,6 +267,34 @@ public class Controller {
     @FXML private TableColumn<ProductoVenta, Integer> colCantidadVentas;
 
     @FXML private TableColumn<ProductoVenta, Double> colPrecioVentas;
+
+    private final VentaDAO ventaDAO = new VentaDAO();
+
+    //Ventas al dia, semanales y mensuales
+
+    @FXML private DatePicker dpFechaVentas;
+
+    // Vista: Ventas por Día
+    @FXML private TableView tablaVentasDia;
+    @FXML private TableColumn<?, ?> colNotaVentaDia;
+    @FXML private TableColumn<?, ?> colNombreVentaDia;
+    @FXML private TableColumn<?, ?> colPiezasVentaDia;
+    @FXML private TableColumn<?, ?> colPrecioVentaDia;
+    @FXML private TableColumn<?, ?> colTotalVentaDia;
+
+    // Vista: Ventas por Semana
+    @FXML private TableView tablaVentasSemana;
+    @FXML private TableColumn<?, ?> colNombreVentaSemana;
+    @FXML private TableColumn<?, ?> colFechaVentaSemana;
+    @FXML private TableColumn<?, ?> colPiezasVentaSemana;
+    @FXML private TableColumn<?, ?> colTotalVentaSemana;
+
+    // Vista: Ventas por Mes
+    @FXML private TableView tablaVentasMes;
+    @FXML private TableColumn<?, ?> colNombreVentaMes;
+    @FXML private TableColumn<?, ?> colPiezasVentaMes;
+    @FXML private TableColumn<?, ?> colTotalVentaMes;
+
 
     //ClientesMenu
     @FXML
@@ -305,48 +328,31 @@ public class Controller {
     @FXML
     public void navPrincipal(MouseEvent event) {
         if (txtCorreo != null && txtClave != null) {
-
-            //Lee los datos ingresados y el correo lo hace todo minusculas para evitar errores
             String correoIngresado = txtCorreo.getText().trim().toLowerCase();
             String claveIngresada = txtClave.getText().trim();
 
-            //Si alguna de las casillas quedo vacia lanza un mensaje
             if (correoIngresado.isEmpty() || claveIngresada.isEmpty()) {
                 mostrarAlerta("Error de inicio de sesión", "Por favor ingresa tu correo y contraseña.");
                 return;
             }
 
-            // Buscamos correo y clave en MariaDB
-            String sql = "select * from empleado where correo = ? and clave = ?";
+            if (!correoIngresado.contains("@")) {
+                mostrarAlerta("Correo invalido", "El correo tiene que contener un arroba.");
+                return;
+            }
 
-            try {
-                Connection cn = ConexionBD.getInstancia().getConexion();
+            // Consulta desacoplada a través de EmpleadoDAO
+            Empleado empleadoLogueado = empleadoDAO.autenticar(correoIngresado, claveIngresada);
 
-                //PreparedStatement es la plantilla sql y a esa le asigna los datos reales
-                //Despues remplaza los ? por el correo y la clave
-                try (PreparedStatement ps = cn.prepareStatement(sql)) {
-                    ps.setString(1, correoIngresado);
-                    ps.setString(2, claveIngresada);
+            if (empleadoLogueado != null) {
+                // Guardamos la sesión activa globalmente
+                SesionUsuario.getInstancia().setEmpleadoActual(empleadoLogueado);
+                mostrarAlertaInfo("Bienvenido","¡Bienvenido " + empleadoLogueado.getNombre() + "! Puesto: " + empleadoLogueado.getPuesto());
+                System.out.println("¡Bienvenido " + empleadoLogueado.getNombre() + "! Puesto: " + empleadoLogueado.getPuesto());
 
-                    //ResultSet es la tabla temporal donde se guardan los resultados de MariaDB
-                    try (ResultSet rs = ps.executeQuery()) {
-                        if (rs.next()) {
-                            String nombre = rs.getString("nombre");
-                            String puesto = rs.getString("puesto");
-                            System.out.println("¡bienvenido " + nombre + "! puesto: " + puesto);
-
-                            // Navegamos al menú principal
-                            navegacion("/org/example/sistemasparaelcontroldeunafarmacia/principal.fxml", event);
-                        } else {
-                            mostrarAlerta("Acceso denegado", "Correo o contraseña incorrectos.");
-                        }
-                    }
-                }
-            } catch (Exception e) {
-
-                //Si ocurre cualquier error, muestra este mensaje
-                e.printStackTrace();
-                mostrarAlerta("Error de conexión", "Ocurrió un error al consultar la base de datos.");
+                navegacion("/org/example/sistemasparaelcontroldeunafarmacia/principal.fxml", event);
+            } else {
+                mostrarAlerta("Acceso denegado", "Correo o contraseña incorrectos.");
             }
         } else {
             navegacion("/org/example/sistemasparaelcontroldeunafarmacia/principal.fxml", event);
@@ -360,7 +366,6 @@ public class Controller {
 
     @FXML
     public void registrarEmpleado(MouseEvent event) {
-        // 1. Obtener y limpiar los valores ingresados
         String nombre = txtRegNombre.getText().trim().toLowerCase();
         String apellidoP = txtRegApellidoP.getText().trim().toLowerCase();
         String apellidoM = txtRegApellidoM.getText().trim().toLowerCase();
@@ -368,79 +373,40 @@ public class Controller {
         String correo = txtRegCorreo.getText().trim().toLowerCase();
         String telefono = txtRegTelefono.getText().trim();
 
-        // 2. Validar que los campos obligatorios no estén vacíos
         if (nombre.isEmpty() || apellidoP.isEmpty() || clave.isEmpty() || correo.isEmpty()) {
             mostrarAlerta("Campos incompletos", "Por favor completa Nombre, Apellido paterno, Contraseña y Correo.");
             return;
         }
-        // Como parte de lo anterior, validamos que el correo tenga el uso de arroba
+
         if (!correo.contains("@")) {
             mostrarAlerta("Correo invalido", "El correo tiene que contener un arroba.");
             return;
         }
-        // 3. Consulta SQL para insertar el nuevo empleado (por defecto le asignamos puesto 'cajero')
-        String sql = "insert into empleado (nombre, apellidopaterno, apellidomaterno, clave, correo, telefono, puesto) values (?, ?, ?, ?, ?, ?, ?)";
 
-        try {
-            Connection cn = ConexionBD.getInstancia().getConexion();
+        Empleado nuevoEmp = new Empleado(0, nombre, apellidoP, apellidoM, clave, correo, telefono, "cajero");
 
-            try (PreparedStatement ps = cn.prepareStatement(sql)) {
-                ps.setString(1, nombre);
-                ps.setString(2, apellidoP);
-                ps.setString(3, apellidoM);
-                ps.setString(4, clave);
-                ps.setString(5, correo);
-                ps.setString(6, telefono);
-                ps.setString(7, "cajero"); // Puesto asignado por defecto al registrarse
-
-                int filasAfectadas = ps.executeUpdate();
-
-                if (filasAfectadas > 0) {
-                    System.out.println("¡Empleado registrado con éxito en MariaDB!");
-
-                    // Nos regresa a la pantalla de inicio de sesión para que pruebe entrar
-                    navInicioSesion(event);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (empleadoDAO.insertar(nuevoEmp)) {
+            mostrarAlertaInfo("Éxito", "Empleado registrado correctamente.");
+            navInicioSesion(event);
+        } else {
             mostrarAlerta("Error al registrar", "No se pudo guardar el empleado en la base de datos.");
         }
     }
 
     @FXML
     public void autorizar(MouseEvent event) {
-        String nombreAdmin = txtAdminNombre.getText().trim().toLowerCase();
         String correoAdmin = txtAdminCorreo.getText().trim().toLowerCase();
         String claveAdmin = txtAdminClave.getText().trim();
 
-        if (nombreAdmin.isEmpty() || correoAdmin.isEmpty() || claveAdmin.isEmpty()) {
-            mostrarAlerta("Campos vacíos", "Por favor completa todos los campos del administrador.");
+        if (correoAdmin.isEmpty() || claveAdmin.isEmpty()) {
+            mostrarAlerta("Campos vacíos", "Por favor completa los campos del administrador.");
             return;
         }
 
-        // Consultamos si existe un empleado con ese correo, clave y puesto de gerente
-        String sql = "select * from empleado where correo = ? and clave = ? and puesto = 'gerente'";
-
-        try {
-            Connection cn = ConexionBD.getInstancia().getConexion();
-            try (PreparedStatement ps = cn.prepareStatement(sql)) {
-                ps.setString(1, correoAdmin);
-                ps.setString(2, claveAdmin);
-
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        System.out.println("¡Autorización concedida por el gerente!");
-                        // Redirigimos a la segunda pantalla para cambiar la contraseña
-                        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/restablecerContraseñaDos.fxml", event);
-                    } else {
-                        mostrarAlerta("Acceso Denegado", "Datos de administrador incorrectos o no tienes permisos de gerente.");
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            mostrarAlerta("Error de conexión", "Ocurrió un error al verificar los datos del administrador.");
+        if (empleadoDAO.verificarGerente(correoAdmin, claveAdmin)) {
+            navegacion("/org/example/sistemasparaelcontroldeunafarmacia/restablecerContraseñaDos.fxml", event);
+        } else {
+            mostrarAlerta("Acceso Denegado", "Datos de administrador incorrectos o no tienes permisos de gerente.");
         }
     }
 
@@ -454,30 +420,11 @@ public class Controller {
             return;
         }
 
-        // Actualizamos la clave del empleado que tenga ese correo
-        String sql = "update empleado set clave = ? where correo = ?";
-
-        try {
-            Connection cn = ConexionBD.getInstancia().getConexion();
-            try (PreparedStatement ps = cn.prepareStatement(sql)) {
-                ps.setString(1, nuevaClave);
-                ps.setString(2, correoUsuario);
-
-                int filasAfectadas = ps.executeUpdate();
-
-                if (filasAfectadas > 0) {
-                    mostrarAlerta("Éxito", "La contraseña ha sido actualizada correctamente.");
-                    System.out.println("Contraseña actualizada para: " + correoUsuario);
-
-                    // Regresamos a la pantalla de Inicio de Sesión
-                    navInicioSesion(event);
-                } else {
-                    mostrarAlerta("Usuario no encontrado", "No existe ningún empleado registrado con ese correo.");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            mostrarAlerta("Error al actualizar", "No se pudo cambiar la contraseña en la base de datos.");
+        if (empleadoDAO.actualizarClave(correoUsuario, nuevaClave)) {
+            mostrarAlertaInfo("Éxito", "La contraseña ha sido actualizada correctamente.");
+            navInicioSesion(event);
+        } else {
+            mostrarAlerta("Usuario no encontrado", "No existe ningún empleado registrado con ese correo.");
         }
     }
 
@@ -573,11 +520,69 @@ public class Controller {
         cargarClientesBD();
 
         if (tablaVentas != null) {
-            colProductoVentas.setCellValueFactory(new PropertyValueFactory<>("producto"));
-            colCantidadVentas.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
-            colPrecioVentas.setCellValueFactory(new PropertyValueFactory<>("precio"));
+            if (colProductoVentas != null) colProductoVentas.setCellValueFactory(new PropertyValueFactory<>("producto"));
+            if (colCantidadVentas != null) colCantidadVentas.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+            if (colPrecioVentas != null) colPrecioVentas.setCellValueFactory(new PropertyValueFactory<>("precio"));
 
             tablaVentas.setItems(listaVentas);
+        }
+
+        if (lblTitulo != null && lblTitulo.getText() != null) {
+            String titulo = lblTitulo.getText();
+
+            switch (titulo) {
+                case "Ventas por día":
+                    if (colNotaVentaDia != null) colNotaVentaDia.setCellValueFactory(new PropertyValueFactory<>("nota"));
+                    if (colNombreVentaDia != null) colNombreVentaDia.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+                    if (colPiezasVentaDia != null) colPiezasVentaDia.setCellValueFactory(new PropertyValueFactory<>("piezas"));
+                    if (colPrecioVentaDia != null) colPrecioVentaDia.setCellValueFactory(new PropertyValueFactory<>("precio"));
+                    if (colTotalVentaDia != null) colTotalVentaDia.setCellValueFactory(new PropertyValueFactory<>("total"));
+
+                    LocalDate hoy = LocalDate.now();
+                    if (dpFechaVentas != null) {
+                        dpFechaVentas.setValue(hoy);
+                        dpFechaVentas.setOnAction(e -> cargarVentasDia(dpFechaVentas.getValue()));
+                    }
+                    cargarVentasDia(hoy);
+                    break;
+
+                case "Ventas por semana":
+                    if (colNombreVentaSemana != null) colNombreVentaSemana.setCellValueFactory(new PropertyValueFactory<>("semana"));
+                    if (colFechaVentaSemana != null) colFechaVentaSemana.setCellValueFactory(new PropertyValueFactory<>("fecha"));
+                    if (colPiezasVentaSemana != null) colPiezasVentaSemana.setCellValueFactory(new PropertyValueFactory<>("piezas"));
+                    if (colTotalVentaSemana != null) colTotalVentaSemana.setCellValueFactory(new PropertyValueFactory<>("total"));
+
+                    cargarVentasSemana();
+                    break;
+
+                case "Ventas por mes":
+                    if (colNombreVentaMes != null) colNombreVentaMes.setCellValueFactory(new PropertyValueFactory<>("mes"));
+                    if (colPiezasVentaMes != null) colPiezasVentaMes.setCellValueFactory(new PropertyValueFactory<>("piezas"));
+                    if (colTotalVentaMes != null) colTotalVentaMes.setCellValueFactory(new PropertyValueFactory<>("total"));
+
+                    cargarVentasMes();
+                    break;
+            }
+        }
+    }
+
+    private void cargarVentasDia(LocalDate fecha) {
+        if (fecha != null && tablaVentasDia != null) {
+            tablaVentasDia.getItems().setAll(ventaDAO.obtenerVentasDia(fecha));
+        }
+    }
+
+    private void cargarVentasSemana() {
+        List ventas = ventaDAO.obtenerVentasSemana();
+        if (tablaVentasSemana != null) {
+            tablaVentasSemana.getItems().setAll(ventas);
+        }
+    }
+
+    private void cargarVentasMes() {
+        List ventas = ventaDAO.obtenerVentasMes();
+        if (tablaVentasMes != null) {
+            tablaVentasMes.getItems().setAll(ventas);
         }
     }
 
@@ -920,6 +925,34 @@ public class Controller {
         listaClientes.clear();
         List<Cliente> clientesBD = clienteDAO.listar();
         listaClientes.addAll(clientesBD);
+    }
+
+    @FXML
+    public void finalizarVenta(ActionEvent event) {
+        if (listaVentas.isEmpty()) {
+            mostrarAlerta("Tabla vacía", "No hay productos agregados a la venta actual.");
+            return;
+        }
+
+        double totalConIVA = 0.0;
+        for (ProductoVenta p : listaVentas) {
+            totalConIVA += p.getPrecio() * p.getCantidad();
+        }
+        totalConIVA *= 1.16;
+
+        // Recuperamos el ID del empleado que inició sesión
+        Empleado empActivo = SesionUsuario.getInstancia().getEmpleadoActual();
+        int idEmpleado = (empActivo != null) ? empActivo.getIdEmpleado() : 1;
+        int idClienteDefault = 1;
+
+        if (ventaDAO.registrarVenta(idClienteDefault, idEmpleado, totalConIVA, listaVentas)) {
+            mostrarAlertaInfo("Venta completada", "La venta se ha registrado exitosamente.");
+            listaVentas.clear();
+            lblTotal.setText("$0.00");
+            cargarProductosBD();
+        } else {
+            mostrarAlerta("Error", "No se pudo procesar la venta en la base de datos.");
+        }
     }
 
     @FXML

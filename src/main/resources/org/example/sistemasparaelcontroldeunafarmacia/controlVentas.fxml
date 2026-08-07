@@ -92,21 +92,22 @@
       </VBox>
       <HBox alignment="BOTTOM_RIGHT" prefHeight="75.0" prefWidth="1000.0">
          <children>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+            <VBox alignment="CENTER_LEFT" prefHeight="75.0" prefWidth="253.0" HBox.hgrow="ALWAYS">
                <children>
                   <Label text="Total c/IVA">
                      <font>
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <Label fx:id="lblTotal" prefHeight="45.0" prefWidth="200.0" text="\$0.00">
+                  <Label fx:id="lblTotal" prefHeight="45.0" prefWidth="134.0" text="\$0.00">
                      <font>
                         <Font size="30.0" />
                      </font>
                   </Label>
                </children>
             </VBox>
-            <Region prefHeight="84.0" prefWidth="442.0" HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnFinalizarVenta" mnemonicParsing="false" onAction="#finalizarVenta" prefHeight="25.0" prefWidth="221.0" text="Finalizar Venta" />
+            <Region prefHeight="75.0" prefWidth="438.0" HBox.hgrow="ALWAYS" />
             <HBox alignment="CENTER" prefHeight="84.0" prefWidth="212.0" spacing="10.0">
                <children>
                   <Button fx:id="btnMenuRegistro" mnemonicParsing="false" onAction="#navMenuRegistro" text="Menu Registro" />
