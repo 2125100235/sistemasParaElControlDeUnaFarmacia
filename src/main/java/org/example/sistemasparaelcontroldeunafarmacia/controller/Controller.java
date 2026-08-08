@@ -113,9 +113,6 @@ public class Controller {
     private TextField txtPrecio;
 
     @FXML
-    private TextField txtFecha;
-
-    @FXML
     private Button btnNuevoProducto;
 
     @FXML
@@ -227,9 +224,6 @@ public class Controller {
     private TableView<Producto> tablaProductos;
 
     @FXML
-    private TableColumn<Producto, String> colCaducidad;
-
-    @FXML
     private TableColumn<Producto, Float> colPrecio;
 
     @FXML
@@ -295,12 +289,46 @@ public class Controller {
     @FXML private TableColumn<?, ?> colPiezasVentaMes;
     @FXML private TableColumn<?, ?> colTotalVentaMes;
 
-
     //ClientesMenu
     @FXML
     private Button btnNuevoCliente;
     @FXML
     private Button btnNuevoClienteRegresarClientes;
+
+    //Datos de la cuenta
+    @FXML
+    private Button btnAplicarCuenta;
+
+    @FXML
+    private Button btnCerrarSesion;
+
+    @FXML
+    private Button btnEditarCuenta;
+
+    @FXML
+    private Button btnEliminarCuenta;
+
+    @FXML
+    private Button btnMenuPrincipalDatosCuenta;
+
+
+    @FXML
+    private TextField txtCuentaApellidoM;
+
+    @FXML
+    private TextField txtCuentaApellidoP;
+
+    @FXML
+    private TextField txtCuentaClave;
+
+    @FXML
+    private TextField txtCuentaCorreo;
+
+    @FXML
+    private TextField txtCuentaNombre;
+
+    @FXML
+    private TextField txtCuentaTelefono;
 
     //Método principal para la navegación entre ventanas, se utiliza de forma universal para toda la navegación, por botón se le pasan los parámetros de la URL de la ventana hacia la que va y el evento desde el cuál fue accionado (el botón)
     @FXML
@@ -462,9 +490,6 @@ public class Controller {
         if (colPrecio != null) {
             colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
         }
-        if (colCaducidad != null) {
-            colCaducidad.setCellValueFactory(new PropertyValueFactory<>("fechaCaducidad"));
-        }
 
         //Vinculamos la lista filtrada a las tablas
         if (tablaAbastecimiento != null) {
@@ -562,6 +587,101 @@ public class Controller {
 
                     cargarVentasMes();
                     break;
+                case "Datos de la cuenta":
+                    cargarDatosCuenta();
+                    break;
+            }
+        }
+    }
+
+    // Carga los datos del usuario en sesión a los campos de texto
+    private void cargarDatosCuenta() {
+        Empleado actual = SesionUsuario.getInstancia().getEmpleadoActual();
+        if (actual != null && txtCuentaNombre != null) {
+            txtCuentaNombre.setText(actual.getNombre());
+            txtCuentaApellidoP.setText(actual.getApellidoPaterno());
+            txtCuentaApellidoM.setText(actual.getApellidoMaterno());
+            txtCuentaClave.setText(actual.getClave());
+            txtCuentaCorreo.setText(actual.getCorreo());
+            txtCuentaTelefono.setText(actual.getTelefono());
+
+            // Deshabilitar edición por defecto
+            setCamposEdicionCuenta(false);
+        }
+    }
+
+    // Activa o desactiva la edición de los TextFields
+    private void setCamposEdicionCuenta(boolean editable) {
+        if (txtCuentaNombre != null) txtCuentaNombre.setEditable(editable);
+        if (txtCuentaApellidoP != null) txtCuentaApellidoP.setEditable(editable);
+        if (txtCuentaApellidoM != null) txtCuentaApellidoM.setEditable(editable);
+        if (txtCuentaClave != null) txtCuentaClave.setEditable(editable);
+        if (txtCuentaCorreo != null) txtCuentaCorreo.setEditable(editable);
+        if (txtCuentaTelefono != null) txtCuentaTelefono.setEditable(editable);
+
+
+    }
+
+    @FXML
+    public void habilitarEdicionCuenta(ActionEvent event) {
+        setCamposEdicionCuenta(true);
+        mostrarAlertaInfo("Modo Edición", "Ya puedes modificar la información de tu cuenta.");
+
+    }
+
+    @FXML
+    public void guardarDatosCuenta(ActionEvent event) {
+        Empleado actual = SesionUsuario.getInstancia().getEmpleadoActual();
+        if (actual == null) return;
+
+        String nombre = txtCuentaNombre.getText().trim();
+        String apellidoP = txtCuentaApellidoP.getText().trim();
+        String apellidoM = txtCuentaApellidoM.getText().trim();
+        String clave = txtCuentaClave.getText().trim();
+        String correo = txtCuentaCorreo.getText().trim();
+        String telefono = txtCuentaTelefono.getText().trim();
+
+        if (nombre.isEmpty() || apellidoP.isEmpty() || clave.isEmpty() || correo.isEmpty()) {
+            mostrarAlerta("Campos vacíos", "Nombre, Apellido Paterno, Contraseña y Correo no pueden estar vacíos.");
+            return;
+        }
+
+        Empleado actualizado = new Empleado(actual.getIdEmpleado(), nombre, apellidoP, apellidoM, clave, correo, telefono, actual.getPuesto());
+
+        if (empleadoDAO.actualizar(actualizado)) {
+            SesionUsuario.getInstancia().setEmpleadoActual(actualizado);
+            setCamposEdicionCuenta(false);
+            mostrarAlertaInfo("Éxito", "Tus datos han sido actualizados correctamente.");
+        } else {
+            mostrarAlerta("Error", "No se pudo actualizar la información en la base de datos.");
+        }
+    }
+
+    @FXML
+    public void cerrarSesion(ActionEvent event) {
+        SesionUsuario.getInstancia().cerrarSesion();
+        mostrarAlertaInfo("Sesión finalizada", "Has cerrado sesión exitosamente.");
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/inicioSesion.fxml", event);
+    }
+
+    @FXML
+    public void eliminarCuenta(ActionEvent event) {
+        Empleado actual = SesionUsuario.getInstancia().getEmpleadoActual();
+        if (actual == null) return;
+
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Confirmar eliminación");
+        confirmacion.setHeaderText("¿Deseas eliminar tu cuenta?");
+        confirmacion.setContentText("Esta acción eliminará tu usuario del sistema y no se podrá deshacer.");
+
+        Optional<ButtonType> resultado = confirmacion.showAndWait();
+        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+            if (empleadoDAO.eliminar(actual.getIdEmpleado())) {
+                SesionUsuario.getInstancia().cerrarSesion();
+                mostrarAlertaInfo("Cuenta eliminada", "Tu cuenta ha sido removida del sistema.");
+                navegacion("/org/example/sistemasparaelcontroldeunafarmacia/inicioSesion.fxml", event);
+            } else {
+                mostrarAlerta("Error", "No se pudo eliminar la cuenta de la base de datos.");
             }
         }
     }
@@ -675,16 +795,6 @@ public class Controller {
         TextField txtEditCantidad = new TextField(String.valueOf(productoSeleccionado.getExistencia()));
         TextField txtEditPrecio = new TextField(String.valueOf(productoSeleccionado.getPrecioVenta()));
 
-        // Selector de Fecha (DatePicker) precargado con la fecha actual del producto
-        DatePicker dpEditFecha = new DatePicker();
-        if (productoSeleccionado.getFechaCaducidad() != null && !productoSeleccionado.getFechaCaducidad().isEmpty()) {
-            try {
-                dpEditFecha.setValue(LocalDate.parse(productoSeleccionado.getFechaCaducidad()));
-            } catch (Exception e) {
-                // Si la fecha en BD tuviera un formato raro, la ignoramos para evitar que falle
-            }
-        }
-
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -696,8 +806,6 @@ public class Controller {
         grid.add(txtEditCantidad, 1, 1);
         grid.add(new Label("Precio de Venta:"), 0, 2);
         grid.add(txtEditPrecio, 1, 2);
-        grid.add(new Label("Fecha Caducidad:"), 0, 3);
-        grid.add(dpEditFecha, 1, 3); // Integramos el selector de fecha
 
         dialog.getDialogPane().setContent(grid);
 
@@ -707,21 +815,19 @@ public class Controller {
             String nombre = txtEditNombre.getText().trim();
             String cantidadStr = txtEditCantidad.getText().trim();
             String precioStr = txtEditPrecio.getText().trim();
-            LocalDate fechaSeleccionada = dpEditFecha.getValue();
 
             // Validar que no dejen campos vacíos
-            if (nombre.isEmpty() || cantidadStr.isEmpty() || precioStr.isEmpty() || fechaSeleccionada == null) {
-                mostrarAlerta("Campos incompletos", "Por favor completa Nombre, Cantidad, Precio y Fecha de Caducidad.");
+            if (nombre.isEmpty() || cantidadStr.isEmpty() || precioStr.isEmpty()) {
+                mostrarAlerta("Campos incompletos", "Por favor completa Nombre, Cantidad y Precio.");
                 return;
             }
 
             try {
                 int existencia = Integer.parseInt(cantidadStr);
                 float precio = Float.parseFloat(precioStr);
-                String fechaFormatted = fechaSeleccionada.toString(); // Convierte automáticamente a "YYYY-MM-DD"
 
                 // Creamos el objeto Producto actualizado
-                Producto prodActualizado = new Producto(productoSeleccionado.getCodigo(), nombre, existencia, precio, fechaFormatted);
+                Producto prodActualizado = new Producto(productoSeleccionado.getCodigo(), nombre, existencia, precio);
 
                 // Guardamos mediante el DAO
                 if (productoDAO.actualizar(prodActualizado)) {
@@ -778,10 +884,9 @@ public class Controller {
             String nombre = txtNombre.getText().trim();
             int existencia = Integer.parseInt(txtCantidad.getText().trim());
             float precio = Float.parseFloat(txtPrecio.getText().trim());
-            String fecha = (txtFecha != null) ? txtFecha.getText().trim() : "";
 
-            // Creamos el producto con 5 datos
-            Producto nuevoProducto = new Producto(0, nombre, existencia, precio, fecha);
+            // Creamos el producto
+            Producto nuevoProducto = new Producto(0, nombre, existencia, precio);
 
             // Guardamos mediante el DAO
             if (productoDAO.insertar(nuevoProducto)) {
@@ -907,7 +1012,6 @@ public class Controller {
         if (txtNombre != null) txtNombre.clear();
         if (txtCantidad != null) txtCantidad.clear();
         if (txtPrecio != null) txtPrecio.clear();
-        if (txtFecha != null) txtFecha.clear();
         productoSeleccionado = null; // Reiniciamos la selección
     }
 

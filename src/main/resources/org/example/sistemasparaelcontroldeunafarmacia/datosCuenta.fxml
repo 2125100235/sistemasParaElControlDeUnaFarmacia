@@ -37,8 +37,8 @@
                <children>
                   <Label minWidth="-Infinity" text="(Permite que tu administrador llene el siguiente formulario)" />
                   <Region minWidth="0.0" prefHeight="25.0" prefWidth="447.0" HBox.hgrow="ALWAYS" />
-                  <Button minWidth="-Infinity" mnemonicParsing="false" styleClass="botonNormal" text="Editar" />
-                  <Button minWidth="-Infinity" mnemonicParsing="false" styleClass="botonNormal" text="Aplicar" />
+                  <Button fx:id="btnEditarCuenta" minWidth="-Infinity" mnemonicParsing="false" onAction="#habilitarEdicionCuenta" styleClass="botonNormal" text="Editar" />
+                  <Button fx:id="btnAplicarCuenta" minWidth="-Infinity" mnemonicParsing="false" onAction="#guardarDatosCuenta" styleClass="botonNormal" text="Aplicar" />
                </children>
                <padding>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
@@ -62,7 +62,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextField prefHeight="59.0" prefWidth="415.0" />
+                        <TextField fx:id="txtCuentaNombre" prefHeight="59.0" prefWidth="415.0" />
                      </children>
                      <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -75,7 +75,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextField prefHeight="67.0" prefWidth="445.0" />
+                        <TextField fx:id="txtCuentaApellidoP" prefHeight="67.0" prefWidth="445.0" />
                      </children>
                      <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -88,7 +88,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextField prefHeight="90.0" prefWidth="445.0" />
+                        <TextField fx:id="txtCuentaApellidoM" prefHeight="90.0" prefWidth="445.0" />
                      </children>
                      <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -101,7 +101,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextField prefHeight="83.0" prefWidth="445.0" promptText="Ingresa tu contraseña para ver" />
+                        <TextField fx:id="txtCuentaClave" prefHeight="83.0" prefWidth="445.0" promptText="Ingresa tu contraseña para ver" />
                      </children>
                      <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -114,7 +114,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextField prefHeight="87.0" prefWidth="445.0" />
+                        <TextField fx:id="txtCuentaCorreo" prefHeight="87.0" prefWidth="445.0" />
                      </children>
                      <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -127,7 +127,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextField prefHeight="106.0" prefWidth="445.0" />
+                        <TextField fx:id="txtCuentaTelefono" prefHeight="106.0" prefWidth="445.0" />
                      </children>
                      <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -140,9 +140,9 @@
             </GridPane>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Button mnemonicParsing="false" styleClass="botonNormal" text="Menú principal" />
-                  <Button mnemonicParsing="false" styleClass="botonNormal" text="Cerrar sesión" />
-                  <Button mnemonicParsing="false" styleClass="botonNormal" text="Eliminar cuenta" />
+                  <Button fx:id="btnMenuPrincipalDatosCuenta" mnemonicParsing="false" onAction="#navMenuPrincipal" styleClass="botonNormal" text="Menú principal" />
+                  <Button fx:id="btnCerrarSesion" mnemonicParsing="false" onAction="#cerrarSesion" styleClass="botonNormal" text="Cerrar sesión" />
+                  <Button fx:id="btnEliminarCuenta" mnemonicParsing="false" onAction="#eliminarCuenta" styleClass="botonNormal" text="Eliminar cuenta" />
                </children>
             </HBox>
          </children>

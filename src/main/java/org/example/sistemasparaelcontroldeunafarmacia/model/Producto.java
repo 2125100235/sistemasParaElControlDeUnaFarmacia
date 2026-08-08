@@ -5,23 +5,20 @@ public class Producto {
     private String nombre;
     private int existencia;
     private float precioVenta;
-    private String fechaCaducidad;
 
     // Constructor completo
-    public Producto(int codigo, String nombre, int existencia, float precioVenta, String fechaCaducidad) {
+    public Producto(int codigo, String nombre, int existencia, float precioVenta) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.existencia = existencia;
         this.precioVenta = precioVenta;
-        this.fechaCaducidad = fechaCaducidad;
     }
 
-    // Constructor secundario (útil para crear productos antes de insertar)
-    public Producto(String nombre, int existencia, float precioVenta, String fechaCaducidad) {
+    // Constructor secundario
+    public Producto(String nombre, int existencia, float precioVenta) {
         this.nombre = nombre;
         this.existencia = existencia;
         this.precioVenta = precioVenta;
-        this.fechaCaducidad = fechaCaducidad;
     }
 
     // Getters y Setters
@@ -36,7 +33,4 @@ public class Producto {
 
     public float getPrecioVenta() { return precioVenta; }
     public void setPrecioVenta(float precioVenta) { this.precioVenta = precioVenta; }
-
-    public String getFechaCaducidad() { return fechaCaducidad; }
-    public void setFechaCaducidad(String fechaCaducidad) { this.fechaCaducidad = fechaCaducidad; }
 }

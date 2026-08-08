@@ -11,7 +11,7 @@ public class ProductoDAO {
 
     // CREATE (INSERTAR)
     public boolean insertar(Producto producto) {
-        String sql = "INSERT INTO producto (nombre, existencia, precioVenta, fechaCaducidad) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO producto (nombre, existencia, precioVenta) VALUES (?, ?, ?)";
 
         try {
             Connection conn = ConexionBD.getInstancia().getConexion();
@@ -19,7 +19,6 @@ public class ProductoDAO {
                 ps.setString(1, producto.getNombre());
                 ps.setInt(2, producto.getExistencia());
                 ps.setFloat(3, producto.getPrecioVenta());
-                ps.setString(4, producto.getFechaCaducidad());
 
                 return ps.executeUpdate() > 0;
             }
@@ -44,8 +43,7 @@ public class ProductoDAO {
                             rs.getInt("codigo"),
                             rs.getString("nombre"),
                             rs.getInt("existencia"),
-                            rs.getFloat("precioVenta"),
-                            rs.getString("fechaCaducidad")
+                            rs.getFloat("precioVenta")
                     );
                     lista.add(p);
                 }
@@ -71,8 +69,7 @@ public class ProductoDAO {
                                 rs.getInt("codigo"),
                                 rs.getString("nombre"),
                                 rs.getInt("existencia"),
-                                rs.getFloat("precioVenta"),
-                                rs.getString("fechaCaducidad")
+                                rs.getFloat("precioVenta")
                         );
                     }
                 }
@@ -86,7 +83,7 @@ public class ProductoDAO {
 
     // UPDATE (ACTUALIZAR)
     public boolean actualizar(Producto producto) {
-        String sql = "UPDATE producto SET nombre=?, existencia=?, precioVenta=?, fechaCaducidad=? WHERE codigo=?";
+        String sql = "UPDATE producto SET nombre=?, existencia=?, precioVenta=? WHERE codigo=?";
 
         try {
             Connection conn = ConexionBD.getInstancia().getConexion();
@@ -94,8 +91,7 @@ public class ProductoDAO {
                 ps.setString(1, producto.getNombre());
                 ps.setInt(2, producto.getExistencia());
                 ps.setFloat(3, producto.getPrecioVenta());
-                ps.setString(4, producto.getFechaCaducidad());
-                ps.setInt(5, producto.getCodigo());
+                ps.setInt(4, producto.getCodigo());
 
                 return ps.executeUpdate() > 0;
             }
@@ -120,6 +116,7 @@ public class ProductoDAO {
             return false;
         }
     }
+
     public Producto buscarPorNombreOCodigo(String busqueda) {
         String sql = "SELECT * FROM producto WHERE codigo = ? OR nombre LIKE ?";
 
@@ -131,7 +128,6 @@ public class ProductoDAO {
                 try {
                     codigo = Integer.parseInt(busqueda);
                 } catch (NumberFormatException ignored) {
-                    // Si el texto no es número, ignora y busca solo por nombre
                 }
 
                 ps.setInt(1, codigo);
@@ -143,8 +139,7 @@ public class ProductoDAO {
                                 rs.getInt("codigo"),
                                 rs.getString("nombre"),
                                 rs.getInt("existencia"),
-                                rs.getFloat("precioVenta"),
-                                rs.getString("fechaCaducidad")
+                                rs.getFloat("precioVenta")
                         );
                     }
                 }

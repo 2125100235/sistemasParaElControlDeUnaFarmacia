@@ -58,7 +58,6 @@
                 <TableColumn fx:id="colNombre" prefWidth="75.0" text="Nombre" />
                   <TableColumn fx:id="colExistencia" prefWidth="75.0" text="Existencia" />
                   <TableColumn fx:id="colPrecio" prefWidth="75.0" text="Precio a la venta" />
-                  <TableColumn fx:id="colCaducidad" prefWidth="75.0" text="Fecha de caducidad" />
               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

@@ -89,4 +89,39 @@ public class EmpleadoDAO {
             return false;
         }
     }
+
+    public boolean actualizar(Empleado emp) {
+        String sql = "UPDATE empleado SET nombre = ?, apellidoPaterno = ?, apellidoMaterno = ?, clave = ?, correo = ?, telefono = ?, puesto = ? WHERE idEmpleado = ?";
+        try (Connection cn = ConexionBD.getInstancia().getConexion();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setString(1, emp.getNombre());
+            ps.setString(2, emp.getApellidoPaterno());
+            ps.setString(3, emp.getApellidoMaterno());
+            ps.setString(4, emp.getClave());
+            ps.setString(5, emp.getCorreo());
+            ps.setString(6, emp.getTelefono());
+            ps.setString(7, emp.getPuesto());
+            ps.setInt(8, emp.getIdEmpleado());
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean eliminar(int idEmpleado) {
+        String sql = "DELETE FROM empleado WHERE idEmpleado = ?";
+        try (Connection cn = ConexionBD.getInstancia().getConexion();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setInt(1, idEmpleado);
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

@@ -2,13 +2,12 @@
 create database farmacia;
 use farmacia;
 
-#Tabla de artículos
+#Tabla de productos
 create table producto(
 codigo int auto_increment not null,
 nombre varchar(150) not null,
 existencia int not null,
 precioVenta decimal(10,2) not null,
-fechaCaducidad date not null,
 primary key (codigo)
 );
 
