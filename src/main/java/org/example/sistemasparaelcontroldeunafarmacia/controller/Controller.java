@@ -21,11 +21,14 @@ import javafx.stage.Stage;
 import org.example.sistemasparaelcontroldeunafarmacia.dao.*;
 import org.example.sistemasparaelcontroldeunafarmacia.model.*;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
 
 import java.sql.*;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -254,6 +257,8 @@ public class Controller {
 
     @FXML private FontAwesomeIconView btnUsuarioVentas;
 
+    @FXML private Button btnEliminarControlVenta;
+
     @FXML private TableView<ProductoVenta> tablaVentas;
 
     @FXML private TableColumn<ProductoVenta, String> colProductoVentas;
@@ -262,7 +267,11 @@ public class Controller {
 
     @FXML private TableColumn<ProductoVenta, Double> colPrecioVentas;
 
+    @FXML private ComboBox<Cliente> cbClienteVentas;
+
     private final VentaDAO ventaDAO = new VentaDAO();
+
+    private final ContextMenu menuSugerenciasVentas = new ContextMenu();
 
     //Ventas al dia, semanales y mensuales
 
@@ -275,6 +284,8 @@ public class Controller {
     @FXML private TableColumn<?, ?> colPiezasVentaDia;
     @FXML private TableColumn<?, ?> colPrecioVentaDia;
     @FXML private TableColumn<?, ?> colTotalVentaDia;
+    @FXML private TableColumn<?, ?> colClienteVentaDia;
+    @FXML private TableColumn<?, ?> colEmpleadoVentaDia;
 
     // Vista: Ventas por Semana
     @FXML private TableView tablaVentasSemana;
@@ -493,6 +504,12 @@ public class Controller {
 
         //Vinculamos la lista filtrada a las tablas
         if (tablaAbastecimiento != null) {
+            tablaAbastecimiento.getSelectionModel().selectedItemProperty().addListener((observable, oldSelection, newSelection) -> {
+                if (newSelection != null) {
+                    productoSeleccionado = newSelection;
+                    cargarDatosEnCampos(newSelection); // Dispara el autocompletado
+                }
+            });
             tablaAbastecimiento.setItems(listaFiltrada);
         } else if (tablaProductos != null) {
             tablaProductos.setItems(listaFiltrada);
@@ -515,8 +532,6 @@ public class Controller {
         // Carga los datos de MySQL en cuanto abre la ventana
         cargarProductosBD();
 
-
-        //FALTA REVISAR
         clienteDAO = new ClienteDAO();
         listaClientes = FXCollections.observableArrayList();
         // Envolvemos la lista original dentro de un FilteredList (Lista filtrada)
@@ -558,6 +573,8 @@ public class Controller {
             switch (titulo) {
                 case "Ventas por día":
                     if (colNotaVentaDia != null) colNotaVentaDia.setCellValueFactory(new PropertyValueFactory<>("nota"));
+                    if (colClienteVentaDia != null) colClienteVentaDia.setCellValueFactory(new PropertyValueFactory<>("cliente"));
+                    if (colEmpleadoVentaDia != null) colEmpleadoVentaDia.setCellValueFactory(new PropertyValueFactory<>("empleado"));
                     if (colNombreVentaDia != null) colNombreVentaDia.setCellValueFactory(new PropertyValueFactory<>("nombre"));
                     if (colPiezasVentaDia != null) colPiezasVentaDia.setCellValueFactory(new PropertyValueFactory<>("piezas"));
                     if (colPrecioVentaDia != null) colPrecioVentaDia.setCellValueFactory(new PropertyValueFactory<>("precio"));
@@ -577,7 +594,12 @@ public class Controller {
                     if (colPiezasVentaSemana != null) colPiezasVentaSemana.setCellValueFactory(new PropertyValueFactory<>("piezas"));
                     if (colTotalVentaSemana != null) colTotalVentaSemana.setCellValueFactory(new PropertyValueFactory<>("total"));
 
-                    cargarVentasSemana();
+                    LocalDate hoySemana = LocalDate.now();
+                    if (dpFechaVentas != null) {
+                        dpFechaVentas.setValue(hoySemana);
+                        dpFechaVentas.setOnAction(e -> cargarVentasSemana(dpFechaVentas.getValue()));
+                    }
+                    cargarVentasSemana(hoySemana);
                     break;
 
                 case "Ventas por mes":
@@ -585,13 +607,139 @@ public class Controller {
                     if (colPiezasVentaMes != null) colPiezasVentaMes.setCellValueFactory(new PropertyValueFactory<>("piezas"));
                     if (colTotalVentaMes != null) colTotalVentaMes.setCellValueFactory(new PropertyValueFactory<>("total"));
 
-                    cargarVentasMes();
-                    break;
-                case "Datos de la cuenta":
-                    cargarDatosCuenta();
+                    LocalDate hoyMes = LocalDate.now();
+                    if (dpFechaVentas != null) {
+                        dpFechaVentas.setValue(hoyMes);
+                        dpFechaVentas.setOnAction(e -> cargarVentasMes(dpFechaVentas.getValue()));
+                    }
+                    cargarVentasMes(hoyMes);
                     break;
             }
         }
+        // Cargar clientes en el control de ventas para asociar cada venta a un cliente
+        if (cbClienteVentas != null) {
+            cbClienteVentas.setItems(listaClientes);
+
+            // Formateador para mostrar solo el nombre del cliente en las opciones desplegables
+            cbClienteVentas.setCellFactory(param -> new ListCell<Cliente>() {
+                @Override
+                protected void updateItem(Cliente item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? "" : item.getNombre());
+                }
+            });
+
+            // Formateador para mostrar el nombre del cliente seleccionado
+            cbClienteVentas.setButtonCell(new ListCell<Cliente>() {
+                @Override
+                protected void updateItem(Cliente item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? "" : item.getNombre());
+                }
+            });
+        }
+
+        configurarAutocompletadoVentas();
+    }
+
+    @FXML
+    void eliminarControlVenta(ActionEvent event) {
+        // Obtener el elemento seleccionado de la tabla de ventas
+        ProductoVenta seleccionado = tablaVentas.getSelectionModel().getSelectedItem();
+
+        // Validar que el usuario haya seleccionado una fila
+        if (seleccionado == null) {
+            mostrarAlerta("Sin selección", "Por favor, selecciona un producto de la lista para eliminarlo de la venta.");
+            return;
+        }
+
+        // Remover el producto de la lista observable
+        listaVentas.remove(seleccionado);
+
+        // Recalcular y actualizar el total mostrado en pantalla
+        actualizarTotal();
+
+        // Si utilizas lblTotalVentas en tu interfaz, descomenta la siguiente línea:
+        actualizarTotalVentas();
+    }
+
+    // Esto es para la barra de búsqueda del control de ventas
+    private List<Producto> buscarProductosSugeridos(String query) {
+        String filtro = query.toLowerCase().trim();
+        if (filtro.isEmpty()) return Collections.emptyList();
+
+        List<Producto> empiezanCon = new ArrayList<>();
+        List<Producto> contienen = new ArrayList<>();
+
+        for (Producto p : listaProductos) {
+            String nombreLower = p.getNombre().toLowerCase();
+            String codigoStr = String.valueOf(p.getCodigo());
+
+            // Prioridad 1: Empiezan con el texto o código
+            if (nombreLower.startsWith(filtro) || codigoStr.startsWith(filtro)) {
+                empiezanCon.add(p);
+            }
+            // Prioridad 2: Contienen el texto en medio de la palabra
+            else if (nombreLower.contains(filtro) || codigoStr.contains(filtro)) {
+                contienen.add(p);
+            }
+        }
+
+        // Une ambas listas manteniendo la prioridad
+        empiezanCon.addAll(contienen);
+        return empiezanCon;
+    }
+
+    private void configurarAutocompletadoVentas() {
+        if (barraBusquedaVentas == null) return;
+
+        // Escucha cada tecla escrita en la barra de ventas
+        barraBusquedaVentas.textProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue == null || newValue.trim().isEmpty()) {
+                menuSugerenciasVentas.hide();
+            } else {
+                mostrarMenuSugerencias(newValue.trim());
+            }
+        });
+    }
+
+    private void mostrarMenuSugerencias(String filtro) {
+        List<Producto> coincidencias = buscarProductosSugeridos(filtro);
+
+        if (coincidencias.isEmpty()) {
+            menuSugerenciasVentas.hide();
+            return;
+        }
+
+        menuSugerenciasVentas.getItems().clear();
+        int maxResultados = 8; // Muestra un máximo de 8 opciones
+        int contador = 0;
+
+        for (Producto p : coincidencias) {
+            if (contador++ >= maxResultados) break;
+
+            // Formato visual para el cajero: Nombre | Stock | Precio
+            String etiqueta = String.format("%s  |  Existencia: %d",
+                    p.getNombre(), p.getExistencia(), p.getPrecioVenta());
+
+            MenuItem item = new MenuItem(etiqueta);
+            item.setOnAction(e -> seleccionarProductoAutoCompletado(p));
+            menuSugerenciasVentas.getItems().add(item);
+        }
+
+        // Despliega el menú debajo de la barra de búsqueda
+        if (!menuSugerenciasVentas.isShowing()) {
+            menuSugerenciasVentas.show(barraBusquedaVentas, javafx.geometry.Side.BOTTOM, 0, 0);
+        }
+    }
+
+    private void seleccionarProductoAutoCompletado(Producto p) {
+        this.productoSeleccionado = p;
+        barraBusquedaVentas.setText(p.getNombre());
+        txtPrecioVentas.setText(String.format("$%.2f", p.getPrecioVenta()));
+        txtCantidadVentas.setText("1");
+        txtCantidadVentas.requestFocus(); // Pasa el foco directamente a la cantidad
+        menuSugerenciasVentas.hide();
     }
 
     // Carga los datos del usuario en sesión a los campos de texto
@@ -692,17 +840,15 @@ public class Controller {
         }
     }
 
-    private void cargarVentasSemana() {
-        List ventas = ventaDAO.obtenerVentasSemana();
-        if (tablaVentasSemana != null) {
-            tablaVentasSemana.getItems().setAll(ventas);
+    private void cargarVentasSemana(LocalDate fecha) {
+        if (fecha != null && tablaVentasSemana != null) {
+            tablaVentasSemana.getItems().setAll(ventaDAO.obtenerVentasSemana(fecha.getYear()));
         }
     }
 
-    private void cargarVentasMes() {
-        List ventas = ventaDAO.obtenerVentasMes();
-        if (tablaVentasMes != null) {
-            tablaVentasMes.getItems().setAll(ventas);
+    private void cargarVentasMes(LocalDate fecha) {
+        if (fecha != null && tablaVentasMes != null) {
+            tablaVentasMes.getItems().setAll(ventaDAO.obtenerVentasMes(fecha.getYear()));
         }
     }
 
@@ -882,19 +1028,49 @@ public class Controller {
 
         try {
             String nombre = txtNombre.getText().trim();
-            int existencia = Integer.parseInt(txtCantidad.getText().trim());
+            int cantidadAñadir = Integer.parseInt(txtCantidad.getText().trim());
             float precio = Float.parseFloat(txtPrecio.getText().trim());
 
-            // Creamos el producto
-            Producto nuevoProducto = new Producto(0, nombre, existencia, precio);
+            if (cantidadAñadir <= 0) {
+                mostrarAlerta("Cantidad inválida", "La cantidad ingresada debe ser mayor a 0.");
+                return;
+            }
 
-            // Guardamos mediante el DAO
-            if (productoDAO.insertar(nuevoProducto)) {
-                mostrarAlertaInfo("Éxito", "¡Producto guardado exitosamente!");
-                limpiarCampos();
-                cargarProductosBD(); // Recarga la tabla en la interfaz
+            // 1. Verificamos si hay un producto seleccionado o si coincide por nombre en la lista
+            Producto productoExistente = productoSeleccionado;
+
+            if (productoExistente == null) {
+                for (Producto p : listaProductos) {
+                    if (p.getNombre().equalsIgnoreCase(nombre)) {
+                        productoExistente = p;
+                        break;
+                    }
+                }
+            }
+
+            // 2. Si el producto ya existe, actualizamos su existencia sumando la cantidad
+            if (productoExistente != null) {
+                int nuevaExistencia = productoExistente.getExistencia() + cantidadAñadir;
+                Producto prodActualizado = new Producto(productoExistente.getCodigo(), nombre, nuevaExistencia, precio);
+
+                if (productoDAO.actualizar(prodActualizado)) {
+                    mostrarAlertaInfo("Stock actualizado", "Se añadieron " + cantidadAñadir + " unidades a '" + nombre + "'. Nueva existencia: " + nuevaExistencia);
+                    limpiarCampos();
+                    cargarProductosBD();
+                } else {
+                    mostrarAlerta("Error", "No se pudo actualizar la existencia del producto en la base de datos.");
+                }
             } else {
-                mostrarAlerta("Error", "No se pudo guardar el producto en la base de datos.");
+                // 3. Si no existe, creamos el registro nuevo
+                Producto nuevoProducto = new Producto(0, nombre, cantidadAñadir, precio);
+
+                if (productoDAO.insertar(nuevoProducto)) {
+                    mostrarAlertaInfo("Éxito", "¡Producto registrado exitosamente!");
+                    limpiarCampos();
+                    cargarProductosBD();
+                } else {
+                    mostrarAlerta("Error", "No se pudo guardar el nuevo producto en la base de datos.");
+                }
             }
 
         } catch (NumberFormatException e) {
@@ -904,9 +1080,12 @@ public class Controller {
 
     // Método auxiliar para pasar los datos del producto seleccionado a los campos de texto
     private void cargarDatosEnCampos(Producto producto) {
+        if(producto == null){
+            return;
+        }
         if (txtCodigo != null) txtCodigo.setText(String.valueOf(producto.getCodigo()));
         if (txtNombre != null) txtNombre.setText(producto.getNombre());
-        if (txtCantidad != null) txtCantidad.setText(String.valueOf(producto.getExistencia()));
+        if (txtCantidad != null) txtCantidad.clear();
         if (txtPrecio != null) txtPrecio.setText(String.valueOf(producto.getPrecioVenta()));
     }
 
@@ -1021,6 +1200,18 @@ public class Controller {
         alert.setTitle(titulo);
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
+
+        // 1. Obtener el DialogPane de la alerta
+        DialogPane dialogPane = alert.getDialogPane();
+
+        // 2. Cargar tu archivo CSS (ajusta la ruta según tu proyecto)
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/style/style.css").toExternalForm()
+        );
+
+        // 3. (Opcional) Agregar una clase personalizada para este tipo de alerta
+        dialogPane.getStyleClass().add("mi-alerta-custom");
+
         alert.showAndWait();
     }
 
@@ -1038,20 +1229,28 @@ public class Controller {
             return;
         }
 
+        // Validar selección obligatoria de cliente
+        Cliente clienteSeleccionadoVenta = (cbClienteVentas != null) ? cbClienteVentas.getValue() : null;
+        if (clienteSeleccionadoVenta == null) {
+            mostrarAlerta("Cliente no seleccionado", "Por favor selecciona un cliente antes de finalizar la venta.");
+            return;
+        }
+
         double totalConIVA = 0.0;
         for (ProductoVenta p : listaVentas) {
             totalConIVA += p.getPrecio() * p.getCantidad();
         }
         totalConIVA *= 1.16;
 
-        // Recuperamos el ID del empleado que inició sesión
+        // Recuperar ID de empleado y ID de cliente dinámico
         Empleado empActivo = SesionUsuario.getInstancia().getEmpleadoActual();
         int idEmpleado = (empActivo != null) ? empActivo.getIdEmpleado() : 1;
-        int idClienteDefault = 1;
+        int idCliente = clienteSeleccionadoVenta.getCodigo();
 
-        if (ventaDAO.registrarVenta(idClienteDefault, idEmpleado, totalConIVA, listaVentas)) {
-            mostrarAlertaInfo("Venta completada", "La venta se ha registrado exitosamente.");
+        if (ventaDAO.registrarVenta(idCliente, idEmpleado, totalConIVA, listaVentas)) {
+            mostrarAlertaInfo("Venta completada", "La venta se registró exitosamente a nombre de " + clienteSeleccionadoVenta.getNombre() + ".");
             listaVentas.clear();
+            if (cbClienteVentas != null) cbClienteVentas.getSelectionModel().clearSelection();
             lblTotal.setText("$0.00");
             cargarProductosBD();
         } else {
@@ -1078,6 +1277,29 @@ public class Controller {
             txtPrecioVentas.clear();
             mostrarAlerta("No encontrado", "El producto '" + busqueda + "' no existe en el inventario.");
         }
+    }
+
+    private void actualizarTotalVentas() {
+        double sumaTotal = 0.0;
+        for (ProductoVenta item : listaVentas) {
+            sumaTotal += item.getSubtotal();
+        }
+        lblTotalVentas.setText(String.format("$%.2f", sumaTotal));
+    }
+
+    private void actualizarTotal() {
+        double subtotal = 0.0;
+
+        // Sumamos (precio * cantidad) de cada producto en la tabla
+        for (ProductoVenta p : listaVentas) {
+            subtotal += p.getPrecio() * p.getCantidad();
+        }
+
+        // Calculamos el total con el 16% de IVA
+        double totalConIVA = subtotal * 1.16;
+
+        // Formateamos a dos decimales y lo mostramos en la pantalla
+        lblTotal.setText(String.format("$%.2f", totalConIVA));
     }
 
     @FXML
@@ -1108,7 +1330,7 @@ public class Controller {
                     productoSeleccionado.getPrecioVenta()
             ));
 
-            // ACTUALIZA EL TOTAL EN PANTALLA (AQUÍ)
+            // ACTUALIZA EL TOTAL EN PANTALLA
             actualizarTotal();
 
             // Limpiar para la siguiente búsqueda
@@ -1120,30 +1342,6 @@ public class Controller {
         } catch (NumberFormatException e) {
             mostrarAlerta("Error", "Ingresa una cantidad numérica válida.");
         }
-    }
-
-
-    private void actualizarTotalVentas() {
-        double sumaTotal = 0.0;
-        for (ProductoVenta item : listaVentas) {
-            sumaTotal += item.getSubtotal();
-        }
-        lblTotalVentas.setText(String.format("$%.2f", sumaTotal));
-    }
-
-    private void actualizarTotal() {
-        double subtotal = 0.0;
-
-        // Sumamos (precio * cantidad) de cada producto en la tabla
-        for (ProductoVenta p : listaVentas) {
-            subtotal += p.getPrecio() * p.getCantidad();
-        }
-
-        // Calculamos el total con el 16% de IVA
-        double totalConIVA = subtotal * 1.16;
-
-        // Formateamos a dos decimales y lo mostramos en la pantalla
-        lblTotal.setText(String.format("$%.2f", totalConIVA));
     }
 
     @FXML

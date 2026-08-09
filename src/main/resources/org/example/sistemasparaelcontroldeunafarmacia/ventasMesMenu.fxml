@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -25,7 +22,7 @@
       </Label>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <top>
-            <VBox alignment="CENTER" prefHeight="72.0" prefWidth="960.0" BorderPane.alignment="CENTER">
+            <VBox alignment="CENTER_LEFT" prefHeight="72.0" prefWidth="960.0" BorderPane.alignment="CENTER">
                <children>
                   <HBox alignment="CENTER" prefHeight="68.0" prefWidth="960.0" spacing="20.0" VBox.vgrow="ALWAYS">
                      <children>
@@ -39,21 +36,18 @@
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                      </padding>
                   </HBox>
-                  <HBox fx:id="contenedorBuscador" alignment="CENTER" maxWidth="-Infinity" prefHeight="28.0" prefWidth="557.0" spacing="20.0" styleClass="contenedorBuscador">
+                  <HBox fx:id="contenedorBuscador" alignment="CENTER_LEFT" maxWidth="-Infinity" prefHeight="68.0" prefWidth="209.0" spacing="20.0" styleClass="contenedorBuscador">
                      <children>
-                        <TextField alignment="TOP_LEFT" minHeight="-Infinity" minWidth="-Infinity" prefHeight="41.0" prefWidth="528.0" styleClass="campoBuscador" HBox.hgrow="ALWAYS" />
-                        <DatePicker fx:id="dpFechaVentas" />
-                        <FontAwesomeIconView glyphName="SEARCH" size="25" strokeType="INSIDE">
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </FontAwesomeIconView>
+                        <DatePicker fx:id="dpFechaVentas" prefHeight="25.0" prefWidth="509.0" />
                      </children>
                      <padding>
-                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                        <Insets bottom="20.0" left="30.0" right="20.0" top="20.0" />
                      </padding>
                   </HBox>
                </children>
+               <padding>
+                  <Insets left="20.0" right="20.0" />
+               </padding>
             </VBox>
          </top>
       </BorderPane>
@@ -62,6 +56,12 @@
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
          <children>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="btnVentasSemanaMenu" mnemonicParsing="false" onMouseClicked="#navVentasSemanaMenu" prefHeight="28.0" prefWidth="80.0" styleClass="botonNormal" text="Semana" />
+                  <Button fx:id="btnVentasDiaMenu" mnemonicParsing="false" onMouseClicked="#navVentasMenu" prefHeight="28.0" prefWidth="80.0" styleClass="botonNormal" text="Día" />
+               </children>
+            </HBox>
             <TableView fx:id="tablaVentasMes" prefHeight="391.0" prefWidth="920.0">
                <columns>
                   <TableColumn fx:id="colNombreVentaMes" prefWidth="75.0" text="Mes" />
@@ -72,18 +72,15 @@
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>
             </TableView>
-            <HBox prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Button fx:id="btnVentasSemanaMenu" mnemonicParsing="false" onMouseClicked="#navVentasSemanaMenu" styleClass="botonNormal" text="Semana" />
-                  <Button fx:id="btnVentasDiaMenu" mnemonicParsing="false" onMouseClicked="#navVentasMenu" styleClass="botonNormal" text="Día" />
-               </children>
-            </HBox>
          </children>
       </VBox>
       <HBox prefHeight="28.0" prefWidth="911.0">
          <children>
             <Button fx:id="btnProductosRegresarPrincipal" mnemonicParsing="false" onMouseClicked="#navRegresarPrincipal" style="-fx-background-color: white; -fx-border-color: black;;" styleClass="botonNormal" text="Menú principal" textAlignment="CENTER" />
          </children>
+         <VBox.margin>
+            <Insets left="20.0" right="20.0" />
+         </VBox.margin>
       </HBox>
       <HBox alignment="BOTTOM_RIGHT" prefHeight="108.0" prefWidth="960.0">
          <children>

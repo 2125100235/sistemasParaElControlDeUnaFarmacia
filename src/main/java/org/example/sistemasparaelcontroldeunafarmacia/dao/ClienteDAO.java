@@ -70,17 +70,47 @@ public class ClienteDAO {
         }
     }
 
-    public boolean eliminar(int codigo) {
-        String sql = "DELETE FROM cliente WHERE codigo = ?";
+    public boolean eliminar(int codigoCliente) {
+        int idClienteGeneral = 1; // ID del cliente genérico "Público en General"
+
+        if (codigoCliente == idClienteGeneral) {
+            return false; // Evita eliminar al cliente genérico
+        }
+
+        String sqlReasignar = "UPDATE venta SET codigoCliente = ? WHERE codigoCliente = ?";
+        String sqlEliminar = "DELETE FROM cliente WHERE codigo = ?";
+
+        Connection cn = null;
         try {
-            Connection cn = ConexionBD.getInstancia().getConexion();
-            try (PreparedStatement ps = cn.prepareStatement(sql)) {
-                ps.setInt(1, codigo);
-                return ps.executeUpdate() > 0;
+            cn = ConexionBD.getInstancia().getConexion();
+            cn.setAutoCommit(false); // Inicia transacción
+
+            // 1. Mueve las ventas al cliente general
+            try (PreparedStatement psReasignar = cn.prepareStatement(sqlReasignar)) {
+                psReasignar.setInt(1, idClienteGeneral);
+                psReasignar.setInt(2, codigoCliente);
+                psReasignar.executeUpdate();
             }
-        } catch (Exception e) {
+
+            // 2. Elimina al cliente
+            try (PreparedStatement psEliminar = cn.prepareStatement(sqlEliminar)) {
+                psEliminar.setInt(1, codigoCliente);
+                psEliminar.executeUpdate();
+            }
+
+            cn.commit(); // Confirma la operación
+            return true;
+
+        } catch (SQLException e) {
+            if (cn != null) {
+                try { cn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
             e.printStackTrace();
             return false;
+        } finally {
+            if (cn != null) {
+                try { cn.setAutoCommit(true); } catch (SQLException e) { e.printStackTrace(); }
+            }
         }
     }
 }

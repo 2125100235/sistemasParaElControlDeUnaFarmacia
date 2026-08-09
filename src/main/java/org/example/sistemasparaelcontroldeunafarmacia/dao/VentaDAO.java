@@ -88,20 +88,66 @@ public class VentaDAO {
 
     public List<ReporteVentaDia> obtenerVentasDia(LocalDate fecha) {
         List<ReporteVentaDia> lista = new ArrayList<>();
-        String sql = "SELECT v.numeroNota, COALESCE(p.nombre, 'Sin nombre') AS nombre, " +
-                "c.cantidadsalida, c.precioventa, (c.cantidadsalida * c.precioventa) AS total " +
-                "FROM venta v JOIN contiene c ON v.numeroNota = c.numeroNota " +
-                "LEFT JOIN producto p ON c.codigoProducto = p.codigo " +
+        String sql = "SELECT " +
+                "v.numeroNota AS nota, " +
+                "c.nombre AS cliente, " +
+                "CONCAT(e.nombre, ' ', e.apellidoPaterno) AS empleado, " +
+                "p.nombre AS producto, " +
+                "co.cantidadsalida AS piezas, " +
+                "co.precioventa AS precio, " +
+                "(co.cantidadsalida * co.precioventa) AS total " +
+                "FROM venta v " +
+                "INNER JOIN cliente c ON v.codigoCliente = c.codigo " +
+                "INNER JOIN empleado e ON v.idEmpleado = e.idEmpleado " +
+                "INNER JOIN contiene co ON v.numeroNota = co.numeroNota " +
+                "INNER JOIN producto p ON co.codigoProducto = p.codigo " +
                 "WHERE DATE(v.fecha) = ?";
+
+        try (Connection conn = ConexionBD.getInstancia().getConexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setDate(1, Date.valueOf(fecha));
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                ReporteVentaDia report = new ReporteVentaDia();
+                report.setNota(rs.getInt("nota"));
+                report.setCliente(rs.getString("cliente"));
+                report.setEmpleado(rs.getString("empleado"));
+                report.setNombre(rs.getString("producto"));
+                report.setPiezas(rs.getInt("piezas"));
+                report.setPrecio(rs.getDouble("precio"));
+                report.setTotal(rs.getDouble("total"));
+                lista.add(report);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return lista;
+    }
+
+    public List<ReporteVentaSemana> obtenerVentasSemana(int anio) {
+        List<ReporteVentaSemana> lista = new ArrayList<>();
+        String sql = "SELECT " +
+                "CONCAT('Semana ', WEEK(v.fecha, 1)) AS semana, " +
+                "DATE(DATE_SUB(v.fecha, INTERVAL WEEKDAY(v.fecha) DAY)) AS fecha, " +
+                "SUM(c.cantidadsalida) AS piezas, " +
+                "SUM(c.cantidadsalida * c.precioventa) AS total " +
+                "FROM venta v " +
+                "JOIN contiene c ON v.numeroNota = c.numeroNota " +
+                "WHERE YEAR(v.fecha) = ? " +
+                "GROUP BY YEAR(v.fecha), WEEK(v.fecha, 1) " +
+                "ORDER BY fecha ASC";
+
         try (Connection cn = ConexionBD.getInstancia().getConexion();
              PreparedStatement ps = cn.prepareStatement(sql)) {
-            // Se usa el String directo (YYYY-MM-DD) para evitar desfases de zona horaria JDBC
-            ps.setString(1, fecha.toString());
+            ps.setInt(1, anio);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                lista.add(new ReporteVentaDia(
-                        rs.getInt("numeroNota"), rs.getString("nombre"),
-                        rs.getInt("cantidadsalida"), rs.getDouble("precioventa"),
+                lista.add(new ReporteVentaSemana(
+                        rs.getString("semana"),
+                        rs.getString("fecha"),
+                        rs.getInt("piezas"),
                         rs.getDouble("total")
                 ));
             }
@@ -109,36 +155,19 @@ public class VentaDAO {
         return lista;
     }
 
-    public List<ReporteVentaSemana> obtenerVentasSemana() {
-        List<ReporteVentaSemana> lista = new ArrayList<>();
-        String sql = "SELECT CONCAT('Semana ', WEEK(v.fecha)) AS semana, DATE(v.fecha) AS fecha, " +
-                "SUM(c.cantidadsalida) AS piezas, SUM(c.cantidadsalida * c.precioventa) AS total " +
-                "FROM venta v JOIN contiene c ON v.numeroNota = c.numeroNota " +
-                "GROUP BY WEEK(v.fecha), DATE(v.fecha)";
-        try (Connection cn = ConexionBD.getInstancia().getConexion();
-             PreparedStatement ps = cn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                lista.add(new ReporteVentaSemana(
-                        rs.getString("semana"), rs.getString("fecha"),
-                        rs.getInt("piezas"), rs.getDouble("total")
-                ));
-            }
-        } catch (SQLException e) { e.printStackTrace(); }
-        return lista;
-    }
-
-    public List<ReporteVentaMes> obtenerVentasMes() {
+    public List<ReporteVentaMes> obtenerVentasMes(int anio) {
         List<ReporteVentaMes> lista = new ArrayList<>();
-        // ELT fuerzan el nombre del mes a español independientemente del locale de MySQL
         String sql = "SELECT ELT(MONTH(v.fecha), 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre') AS mes, " +
                 "SUM(c.cantidadsalida) AS piezas, " +
                 "SUM(c.cantidadsalida * c.precioventa) AS total " +
                 "FROM venta v JOIN contiene c ON v.numeroNota = c.numeroNota " +
+                "WHERE YEAR(v.fecha) = ? " +
                 "GROUP BY MONTH(v.fecha)";
+
         try (Connection cn = ConexionBD.getInstancia().getConexion();
-             PreparedStatement ps = cn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, anio);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 lista.add(new ReporteVentaMes(
                         rs.getString("mes"), rs.getInt("piezas"), rs.getDouble("total")
