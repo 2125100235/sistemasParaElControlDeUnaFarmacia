@@ -3,7 +3,6 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.geometry.Rectangle2D?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -11,18 +10,10 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom, #ffffff 40%, #e0e0e0 90%);" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
    <children>
       <BorderPane prefHeight="74.0" prefWidth="960.0">
-         <left>
-            <Label text="Farmacia" BorderPane.alignment="CENTER">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
-         </left>
          <right>
             <HBox alignment="CENTER" prefHeight="37.0" prefWidth="75.0" spacing="20.0" BorderPane.alignment="CENTER">
                <children>
@@ -34,6 +25,13 @@
                </padding>
             </HBox>
          </right>
+         <left>
+            <ImageView fitHeight="89.0" fitWidth="86.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+               <image>
+                  <Image url="@../../../images/Logo%20FarmaVive.png" />
+               </image>
+            </ImageView>
+         </left>
       </BorderPane>
       <VBox alignment="CENTER" prefHeight="489.0" prefWidth="960.0" spacing="20.0">
          <padding>

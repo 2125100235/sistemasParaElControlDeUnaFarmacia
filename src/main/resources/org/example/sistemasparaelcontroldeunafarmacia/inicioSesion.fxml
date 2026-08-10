@@ -17,11 +17,11 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom, #ffffff 40%, #e0e0e0 90%);" stylesheets="@../../../style/style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
    <children>
-      <Label text="Farmacia">
-         <font>
-            <Font size="20.0" />
-         </font>
-      </Label>
+      <ImageView fitHeight="89.0" fitWidth="86.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../images/Logo%20FarmaVive.png" />
+         </image>
+      </ImageView>
       <VBox alignment="CENTER" prefHeight="489.0" prefWidth="960.0" spacing="20.0">
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

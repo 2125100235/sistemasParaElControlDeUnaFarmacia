@@ -249,7 +249,7 @@ public class Controller {
 
     @FXML private Button btnMenuPrincipalVentas;
 
-    @FXML private Button btnFinalizarVenta;
+    @FXML private Button btnRegistrarVenta;
 
     @FXML private FontAwesomeIconView btnAyudaVentas;
 
@@ -483,7 +483,7 @@ public class Controller {
     }
 
     @FXML
-    public void initialize() {
+        public void initialize() {
         listaProductos = FXCollections.observableArrayList();
         // Envolvemos la lista original dentro de un FilteredList (Lista filtrada)
         listaFiltrada = new FilteredList<>(listaProductos, p -> true);
@@ -639,6 +639,7 @@ public class Controller {
             });
         }
 
+        cargarDatosCuenta();
         configurarAutocompletadoVentas();
     }
 

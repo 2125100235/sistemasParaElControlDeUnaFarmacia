@@ -17,6 +17,11 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom, #ffffff 40%, #e0e0e0 90%);" stylesheets="@../../../style/style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
    <children>
+      <ImageView fitHeight="89.0" fitWidth="86.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../images/Logo%20FarmaVive.png" />
+         </image>
+      </ImageView>
       <HBox alignment="CENTER" prefHeight="35.0" prefWidth="960.0" spacing="20.0" VBox.vgrow="NEVER">
          <children>
             <Label fx:id="lblTitulo" alignment="CENTER" prefHeight="70.0" prefWidth="329.0" text="Añadir clientes" textOverrun="CLIP">

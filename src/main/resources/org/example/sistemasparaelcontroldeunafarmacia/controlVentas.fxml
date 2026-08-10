@@ -19,13 +19,6 @@
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="603.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom, #ffffff 40%, #e0e0e0 90%);" stylesheets="@../../../style/style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
    <children>
       <BorderPane prefHeight="74.0" prefWidth="960.0">
-         <left>
-            <Label text="Farmacia" BorderPane.alignment="CENTER">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
-         </left>
          <right>
             <HBox alignment="CENTER" prefHeight="37.0" prefWidth="75.0" spacing="20.0" BorderPane.alignment="CENTER">
                <children>
@@ -40,6 +33,13 @@
          <VBox.margin>
             <Insets left="10.0" right="10.0" />
          </VBox.margin>
+         <left>
+            <ImageView fitHeight="89.0" fitWidth="86.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+               <image>
+                  <Image url="@../../../images/Logo%20FarmaVive.png" />
+               </image>
+            </ImageView>
+         </left>
       </BorderPane>
       <VBox prefHeight="433.0" prefWidth="1000.0">
          <children>
@@ -132,9 +132,10 @@
                   </Label>
                </children>
             </VBox>
+            <Button fx:id="btnRegistrarVenta" mnemonicParsing="false" onAction="#finalizarVenta" prefHeight="28.0" prefWidth="114.0" styleClass="botonNormal" text="Registrar venta" />
             <Button fx:id="btnMenuPrincipal" mnemonicParsing="false" onAction="#navMenuPrincipal" styleClass="botonNormal" text="Menu Principal" wrapText="true" />
             <Button fx:id="btnMenuRegistro" mnemonicParsing="false" onAction="#navMenuRegistro" prefWidth="108.0" styleClass="botonNormal" text="Menu Registro" wrapText="true" />
-            <Region prefHeight="75.0" prefWidth="394.0" />
+            <Region prefHeight="75.0" prefWidth="265.0" />
             <ImageView fitHeight="59.0" fitWidth="249.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../images/Logo_LogimedTech_Horizontal.png" />

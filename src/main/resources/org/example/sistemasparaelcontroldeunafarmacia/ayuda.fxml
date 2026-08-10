@@ -13,6 +13,11 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom, #ffffff 40%, #e0e0e0 90%);" stylesheets="@../../../style/style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
    <children>
+      <ImageView fitHeight="89.0" fitWidth="86.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../images/Logo%20FarmaVive.png" />
+         </image>
+      </ImageView>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
          <children>
             <Label fx:id="lblTitulo" alignment="CENTER" prefHeight="54.0" prefWidth="168.0" text="Ayuda" textOverrun="CLIP">
@@ -36,7 +41,7 @@
                   </Label>
                   <Label prefHeight="87.0" prefWidth="554.0" style="-fx-border-color: black; -fx-border-radius: 5px; -fx-background-color: white; -fx-background-radius: 5px; -fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);" text="En el menú principal ingresa en la opción “Registro”, y ahí puedes registrar cualquier venta." textAlignment="JUSTIFY" wrapText="true">
                      <font>
-                        <Font size="18.0" />
+                        <Font size="15.0" />
                      </font>
                   </Label>
                </children>
@@ -50,7 +55,7 @@
                   </Label>
                   <Label prefHeight="87.0" prefWidth="579.0" style="-fx-border-color: black; -fx-border-radius: 5px; -fx-background-color: white; -fx-background-radius: 5px; -fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);" text="Dentro de la tabla de Productos Registrados, toca el símbolo de basura a lado del producto erróneo." textAlignment="JUSTIFY" wrapText="true">
                      <font>
-                        <Font size="18.0" />
+                        <Font size="15.0" />
                      </font>
                   </Label>
                </children>
@@ -64,21 +69,21 @@
                   </Label>
                   <Label prefHeight="87.0" prefWidth="581.0" style="-fx-border-color: black; -fx-border-radius: 5px; -fx-background-color: white; -fx-background-radius: 5px; -fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);" text="En el menú principal ingresa a la opción “Ventas” y después puedes ver todas las ventas con los dos botones azules en la parte inferior izquierda." textAlignment="JUSTIFY" wrapText="true">
                      <font>
-                        <Font size="18.0" />
+                        <Font size="15.0" />
                      </font>
                   </Label>
                </children>
             </HBox>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="100.0">
                <children>
-                  <Label prefHeight="91.0" prefWidth="361.0" style="-fx-border-color: black; -fx-border-radius: 5px; -fx-background-radius: 5px; -fx-background-color: white; -fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);" text="¿Cómo puedo ver qué medicinas caducarán?" textAlignment="JUSTIFY" wrapText="true">
+                  <Label prefHeight="91.0" prefWidth="361.0" style="-fx-border-color: black; -fx-border-radius: 5px; -fx-background-radius: 5px; -fx-background-color: white; -fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);" text="¿Como se seccionan las ventas?" textAlignment="JUSTIFY" wrapText="true">
                      <font>
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <Label prefHeight="87.0" prefWidth="581.0" style="-fx-border-color: black; -fx-border-radius: 5px; -fx-background-color: white; -fx-background-radius: 5px; -fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);" text="En el apartado de “productos” en el menú principal, hay una tabla con toda la información de los productos. Uno de esos apartados es “Fecha de Caducidad”." textAlignment="JUSTIFY" wrapText="true">
+                  <Label prefHeight="87.0" prefWidth="581.0" style="-fx-border-color: black; -fx-border-radius: 5px; -fx-background-color: white; -fx-background-radius: 5px; -fx-effect: dropshadow(one-pass-box, gray, 0, 0, 6, 6);" text="Las ventas son seccionadas por día, mientras que las ventas por semana y mes, muestran todos los correspondientes por año" textAlignment="JUSTIFY" wrapText="true">
                      <font>
-                        <Font size="18.0" />
+                        <Font size="15.0" />
                      </font>
                   </Label>
                </children>

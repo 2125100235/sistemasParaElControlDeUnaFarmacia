@@ -18,6 +18,11 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" spacing="20.0" style="-fx-background-color: linear-gradient(to bottom, #ffffff 40%, #e0e0e0 90%);" stylesheets="@../../../style/style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
    <children>
+      <ImageView fitHeight="89.0" fitWidth="86.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../images/Logo%20FarmaVive.png" />
+         </image>
+      </ImageView>
       <HBox alignment="CENTER_LEFT" maxHeight="529.0" prefHeight="529.0" prefWidth="1000.0" spacing="80.0" VBox.vgrow="ALWAYS">
          <children>
             <VBox alignment="TOP_CENTER" maxHeight="465.0" maxWidth="643.0" prefHeight="392.0" prefWidth="643.0" style="-fx-background-color: #E8E8E8;; -fx-background-radius: 20;;" styleClass="gridPanes" HBox.hgrow="ALWAYS">
