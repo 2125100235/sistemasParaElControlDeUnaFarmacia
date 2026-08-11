@@ -31,7 +31,7 @@ public class ProductoDAO {
     // READ (LISTAR TODOS)
     public List<Producto> listar() {
         List<Producto> lista = new ArrayList<>();
-        String sql = "SELECT * FROM producto";
+        String sql = "SELECT * FROM producto WHERE estado = true";
 
         try {
             Connection conn = ConexionBD.getInstancia().getConexion();
@@ -103,16 +103,13 @@ public class ProductoDAO {
 
     // DELETE (ELIMINAR)
     public boolean eliminar(int codigo) {
-        String sql = "DELETE FROM producto WHERE codigo=?";
-
-        try {
-            Connection conn = ConexionBD.getInstancia().getConexion();
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setInt(1, codigo);
-                return ps.executeUpdate() > 0;
-            }
+        String sql = "UPDATE producto SET estado = FALSE WHERE codigo = ?";
+        try (Connection cn = ConexionBD.getInstancia().getConexion();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, codigo);
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.out.println("Error al eliminar producto: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }

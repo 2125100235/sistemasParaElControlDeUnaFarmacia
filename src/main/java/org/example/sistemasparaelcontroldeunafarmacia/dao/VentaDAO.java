@@ -95,7 +95,7 @@ public class VentaDAO {
                 "p.nombre AS producto, " +
                 "co.cantidadsalida AS piezas, " +
                 "co.precioventa AS precio, " +
-                "(co.cantidadsalida * co.precioventa) AS total " +
+                "(co.cantidadsalida * co.precioventa * 1.16) AS total " +
                 "FROM venta v " +
                 "INNER JOIN cliente c ON v.codigoCliente = c.codigo " +
                 "INNER JOIN empleado e ON v.idEmpleado = e.idEmpleado " +

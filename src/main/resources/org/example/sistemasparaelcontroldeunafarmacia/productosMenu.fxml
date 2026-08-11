@@ -16,11 +16,26 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom, #ffffff 40%, #e0e0e0 90%);" stylesheets="@../../../style/style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.sistemasparaelcontroldeunafarmacia.controller.Controller">
    <children>
-      <ImageView fitHeight="89.0" fitWidth="86.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../../images/Logo%20FarmaVive.png" />
-         </image>
-      </ImageView>
+      <BorderPane prefHeight="74.0" prefWidth="960.0">
+         <right>
+            <HBox alignment="CENTER" prefHeight="37.0" prefWidth="75.0" spacing="20.0" BorderPane.alignment="CENTER">
+               <children>
+                  <FontAwesomeIconView fx:id="btnAyuda" glyphName="QUESTION" onMouseClicked="#navAyuda" size="30" />
+                  <FontAwesomeIconView fx:id="btnusuario" glyphName="USER" onMouseClicked="#navDatosCuenta" size="30" />
+               </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </HBox>
+         </right>
+         <left>
+            <ImageView fitHeight="89.0" fitWidth="86.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+               <image>
+                  <Image url="@../../../images/Logo%20FarmaVive.png" />
+               </image>
+            </ImageView>
+         </left>
+      </BorderPane>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <top>
             <VBox alignment="CENTER" prefHeight="72.0" prefWidth="960.0" BorderPane.alignment="CENTER">

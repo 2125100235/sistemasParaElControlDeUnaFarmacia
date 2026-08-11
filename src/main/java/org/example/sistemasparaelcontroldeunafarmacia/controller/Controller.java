@@ -23,8 +23,6 @@ import org.example.sistemasparaelcontroldeunafarmacia.model.*;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 
-import java.sql.*;
-
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -43,7 +41,6 @@ public class Controller {
 
     @FXML
     private TextField txtClave;
-
 
     //Campos para el registro
     @FXML
@@ -341,6 +338,9 @@ public class Controller {
     @FXML
     private TextField txtCuentaTelefono;
 
+    // Restablecer contraseña
+    @FXML Button btnVolverInicioSesion;
+
     //Método principal para la navegación entre ventanas, se utiliza de forma universal para toda la navegación, por botón se le pasan los parámetros de la URL de la ventana hacia la que va y el evento desde el cuál fue accionado (el botón)
     @FXML
     private void navegacion(String ruta, Event event) {
@@ -360,6 +360,49 @@ public class Controller {
             ventanaActual.show();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    //Determina el puesto del empleado según el dominio de su correo
+    public String determinarPuesto(String correo) {
+        String correoLower = correo.toLowerCase();
+
+        if (correoLower.endsWith("@admin.com")) {
+            return "Admin";
+        } else if (correoLower.endsWith("@caja.com")) {
+            return "Cajero";
+        } else if (correoLower.endsWith("@almacen.com")) {
+            return "Almacenista";
+        } else {
+            mostrarAlerta("Correo invalido","Utiliza uno de los dominios autorizados (@admin.com, @caja.com o @almacen.com)");
+            return null;
+        }
+    }
+
+    //Muestra elementos de la interfaz según el puesto
+    public void aplicarPermisos(String puesto) {
+        if (puesto == null) return;
+
+        boolean esAdmin = puesto.equalsIgnoreCase("Admin");
+        boolean esCajero = puesto.equalsIgnoreCase("Cajero");
+        boolean esAlmacenista = puesto.equalsIgnoreCase("Almacenista");
+
+        // Módulos de Ventas y Registro
+        configurarVisibilidad(btnRegistroMenu, esAdmin || esCajero);
+        configurarVisibilidad(btnVentasMenu, esAdmin || esCajero);
+
+        // Módulo de Clientes
+        configurarVisibilidad(btnClientesMenu, esAdmin || esCajero);
+
+        // Módulo de Productos / Inventario
+        configurarVisibilidad(btnProductosMenu, esAdmin || esAlmacenista);
+    }
+
+    // Método auxiliar para evitar NullPointerException y ajustar el Layout
+    private void configurarVisibilidad(ImageView elemento, boolean visible) {
+        if (elemento != null) {
+            elemento.setVisible(visible);
+            elemento.setManaged(visible);
         }
     }
 
@@ -422,10 +465,15 @@ public class Controller {
             return;
         }
 
-        Empleado nuevoEmp = new Empleado(0, nombre, apellidoP, apellidoM, clave, correo, telefono, "cajero");
+        String puesto = determinarPuesto(correo);
+
+        if(puesto == null){
+            return;
+        }
+        Empleado nuevoEmp = new Empleado(0, nombre, apellidoP, apellidoM, clave, correo, telefono, puesto);
 
         if (empleadoDAO.insertar(nuevoEmp)) {
-            mostrarAlertaInfo("Éxito", "Empleado registrado correctamente.");
+            mostrarAlertaInfo("Éxito", "Empleado registrado correctamente como " + puesto + ".");
             navInicioSesion(event);
         } else {
             mostrarAlerta("Error al registrar", "No se pudo guardar el empleado en la base de datos.");
@@ -442,7 +490,7 @@ public class Controller {
             return;
         }
 
-        if (empleadoDAO.verificarGerente(correoAdmin, claveAdmin)) {
+        if (empleadoDAO.verificarAdministrador(correoAdmin, claveAdmin)) {
             navegacion("/org/example/sistemasparaelcontroldeunafarmacia/restablecerContraseñaDos.fxml", event);
         } else {
             mostrarAlerta("Acceso Denegado", "Datos de administrador incorrectos o no tienes permisos de gerente.");
@@ -470,6 +518,11 @@ public class Controller {
     @FXML
     public void navRestablecer(MouseEvent event) {
         navegacion("/org/example/sistemasparaelcontroldeunafarmacia/restablecerContraseña.fxml", event);
+    }
+
+    @FXML
+    public void navInicio(MouseEvent event) {
+        navegacion("/org/example/sistemasparaelcontroldeunafarmacia/inicio.fxml", event);
     }
 
     public void cargarProductosBD() {
@@ -641,6 +694,12 @@ public class Controller {
 
         cargarDatosCuenta();
         configurarAutocompletadoVentas();
+
+        // Verifica el puesto al cargar
+        Empleado empleadoActual = SesionUsuario.getInstancia().getEmpleadoActual();
+        if (empleadoActual != null && empleadoActual.getPuesto() != null) {
+            aplicarPermisos(empleadoActual.getPuesto());
+        }
     }
 
     @FXML
@@ -768,7 +827,18 @@ public class Controller {
         if (txtCuentaCorreo != null) txtCuentaCorreo.setEditable(editable);
         if (txtCuentaTelefono != null) txtCuentaTelefono.setEditable(editable);
 
-
+        if(btnAplicarCuenta != null){
+            btnAplicarCuenta.setVisible(editable);
+            btnAplicarCuenta.setManaged(editable);
+        }
+        if(btnAplicarCuenta.isVisible()){
+            btnEditarCuenta.setVisible(false);
+            btnEditarCuenta.setManaged(false);
+        }
+        else{
+            btnEditarCuenta.setVisible(true);
+            btnEditarCuenta.setManaged(true);
+        }
     }
 
     @FXML

@@ -68,9 +68,9 @@
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </padding>
             </VBox>
-            <Label fx:id="lblTitulo" alignment="CENTER" prefHeight="389.0" prefWidth="651.0" text="Restablece tu Contraseña" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" HBox.hgrow="ALWAYS">
+            <Label fx:id="lblTitulo" alignment="CENTER" prefHeight="389.0" prefWidth="651.0" text="Autorización de administrador" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" HBox.hgrow="ALWAYS">
                <font>
-                  <Font name="System Bold" size="58.0" />
+                  <Font name="System Bold" size="55.0" />
                </font>
             </Label>
          </children>
@@ -81,7 +81,7 @@
             <Insets left="20.0" right="20.0" />
          </VBox.margin>
       </HBox>
-      <Button fx:id="btnVolverInicioSesion" mnemonicParsing="false" onAction="#navInicioSesion" styleClass="botonNormal" stylesheets="@../../../style/style.css" text="Volver">
+      <Button fx:id="btnVolverInicioSesion" mnemonicParsing="false" onMouseClicked="#navInicio" styleClass="botonNormal" stylesheets="@../../../style/style.css" text="Volver">
          <VBox.margin>
             <Insets left="40.0" right="20.0" />
          </VBox.margin></Button>

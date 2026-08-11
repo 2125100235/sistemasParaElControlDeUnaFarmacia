@@ -4,73 +4,77 @@ use farmacia;
 
 #Tabla de productos
 create table producto(
-codigo int auto_increment not null,
+codigo int not null,
 nombre varchar(150) not null,
 existencia int not null,
 precioVenta decimal(10,2) not null,
-primary key (codigo)
+estado boolean not null default true
 );
+alter table producto add primary key (codigo), modify codigo int auto_increment;
 
 #Tabla de clientes
 create table cliente(
-codigo int auto_increment not null,
+codigo int not null,
 nombre varchar(150) not null,
 telefono varchar(10),
 rfc varchar(13),
-direccion varchar(255) not null,
-primary key (codigo)
+direccion varchar(255) not null
 );
+alter table cliente add primary key (codigo), modify codigo int auto_increment;
 
 #Tabla de empleados
 create table empleado(
-idEmpleado int auto_increment not null,
+idEmpleado int not null,
 nombre varchar(50) not null,
 apellidoPaterno varchar(50) not null,
 apellidoMaterno varchar(50) not null,
 clave varchar(255) not null,
 correo varchar(100) not null unique,
 telefono varchar(10),
-puesto varchar(50) not null,
-primary key (idEmpleado)
+puesto varchar(50) not null
 );
+alter table empleado add primary key (idEmpleado), modify idEmpleado int auto_increment;
 
 #Tabla de ventas
 create table venta (
-    numeroNota int auto_increment not null,
+    numeroNota int not null,
     fecha datetime not null default current_timestamp,
     totalpagar decimal(10,2) not null default 0.00,
     codigoCliente int not null,
-    idEmpleado int not null,
-    primary key (numeronota),
-    foreign key (codigoCliente) references cliente(codigo),
-    foreign key (idEmpleado) references empleado(idEmpleado)
+    idEmpleado int not null
 );
+alter table venta add primary key (numeroNota), modify numeroNota int auto_increment;
+alter table venta add foreign key (codigoCliente) references cliente(codigo);
+alter table venta add foreign key (idEmpleado) references empleado(idEmpleado);
+
 #Tabla de detalle de la venta
 create table contiene (
     numeroNota int not null,
     codigoProducto int not null,
     cantidadsalida int not null,
-    precioventa decimal(10,2) not null,
-    primary key (numeroNota, codigoProducto),
-    foreign key (numeroNota) references venta(numeroNota),
-    foreign key (codigoProducto) references producto(codigo)
+    precioventa decimal(10,2) not null
 );
+alter table contiene add primary key (numeroNota, codigoProducto);
+alter table contiene add foreign key (numeroNota) references venta(numeroNota);
+alter table contiene add foreign key (codigoProducto) references producto(codigo);
+
 #Tabla de entradas al almacén
 create table abastecimiento (
-    idAbastecimiento int auto_increment not null,
+    idAbastecimiento int not null,
     fecha datetime not null default current_timestamp,
     cantidadIngresada int not null,
     codigoProducto int not null,
-    idEmpleado int not null,
-    primary key (idAbastecimiento),
-    foreign key (codigoProducto) references producto(codigo),
-    foreign key (idEmpleado) references empleado(idEmpleado)
+    idEmpleado int not null
 );
+alter table abastecimiento add primary key (idAbastecimiento), modify idAbastecimiento int auto_increment;
+alter table abastecimiento add foreign key (codigoProducto) references producto(codigo);
+alter table abastecimiento add foreign key (idEmpleado) references empleado(idEmpleado);
+
 #Relación entre los artículos y el almacén
 create table genera (
     idAbastecimiento int not null,
-    codigoProducto int not null,
-    primary key (idAbastecimiento, codigoProducto),
-    foreign key (idAbastecimiento) references abastecimiento(idAbastecimiento),
-    foreign key (codigoProducto) references producto(codigo)
+    codigoProducto int not null
 );
+alter table genera add primary key (idAbastecimiento, codigoProducto);
+alter table genera add foreign key (idAbastecimiento) references abastecimiento(idAbastecimiento);
+alter table genera add foreign key (codigoProducto) references producto(codigo);

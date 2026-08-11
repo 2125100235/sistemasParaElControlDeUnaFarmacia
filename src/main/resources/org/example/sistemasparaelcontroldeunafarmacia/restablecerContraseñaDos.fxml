@@ -61,7 +61,7 @@
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
       </HBox>
-      <Button fx:id="btnVolverInicioSesion" mnemonicParsing="false" onAction="#navInicioSesion" styleClass="botonNormal" stylesheets="@../../../style/style.css" text="Volver">
+      <Button fx:id="btnVolverInicioSesion" mnemonicParsing="false" onMouseClicked="#navInicio" styleClass="botonNormal" stylesheets="@../../../style/style.css" text="Volver">
          <VBox.margin>
             <Insets left="30.0" />
          </VBox.margin>

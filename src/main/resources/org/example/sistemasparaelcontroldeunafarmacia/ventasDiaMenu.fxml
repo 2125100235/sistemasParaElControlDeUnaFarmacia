@@ -70,7 +70,7 @@
                   <TableColumn fx:id="colNombreVentaDia" prefWidth="75.0" text="Nombre" />
                   <TableColumn fx:id="colPiezasVentaDia" prefWidth="75.0" text="Piezas vendidas" />
                   <TableColumn fx:id="colPrecioVentaDia" prefWidth="75.0" text="Precio unitario" />
-                  <TableColumn fx:id="colTotalVentaDia" prefWidth="75.0" text="Total" />
+                  <TableColumn fx:id="colTotalVentaDia" prefWidth="75.0" text="Total con IVA" />
                </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

@@ -40,10 +40,9 @@
          <children>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Label minWidth="-Infinity" text="(Permite que tu administrador llene el siguiente formulario)" />
                   <Region minWidth="0.0" prefHeight="25.0" prefWidth="447.0" HBox.hgrow="ALWAYS" />
                   <Button fx:id="btnEditarCuenta" minWidth="-Infinity" mnemonicParsing="false" onAction="#habilitarEdicionCuenta" styleClass="botonNormal" text="Editar" />
-                  <Button fx:id="btnAplicarCuenta" minWidth="-Infinity" mnemonicParsing="false" onAction="#guardarDatosCuenta" styleClass="botonNormal" text="Aplicar" />
+                  <Button fx:id="btnAplicarCuenta" minWidth="-Infinity" mnemonicParsing="false" onAction="#guardarDatosCuenta" styleClass="botonNormal" text="Aplicar" visible="false" managed="false" />
                </children>
                <padding>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
