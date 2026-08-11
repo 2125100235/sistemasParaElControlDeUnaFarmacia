@@ -42,7 +42,7 @@
                <children>
                   <Region minWidth="0.0" prefHeight="25.0" prefWidth="447.0" HBox.hgrow="ALWAYS" />
                   <Button fx:id="btnEditarCuenta" minWidth="-Infinity" mnemonicParsing="false" onAction="#habilitarEdicionCuenta" styleClass="botonNormal" text="Editar" />
-                  <Button fx:id="btnAplicarCuenta" minWidth="-Infinity" mnemonicParsing="false" onAction="#guardarDatosCuenta" styleClass="botonNormal" text="Aplicar" visible="false" managed="false" />
+                  <Button fx:id="btnAplicarCuenta" managed="false" minWidth="-Infinity" mnemonicParsing="false" onAction="#guardarDatosCuenta" styleClass="botonNormal" text="Aplicar" visible="false" />
                </children>
                <padding>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
