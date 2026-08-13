@@ -405,6 +405,14 @@
             }
         }
 
+        //Valida el teléfono
+        private boolean esTelefonoValido(String telefono) {
+            if (telefono == null || telefono.trim().isEmpty()) {
+                return true; // Retorna true si es opcional y está vacío
+            }
+            return telefono.trim().matches("\\d{10}");
+        }
+
         //Navegacion entre ventanas, se le pasan los parámetros de URL y evento al método de navegación
         @FXML
         public void navPrincipal(MouseEvent event) {
@@ -458,24 +466,21 @@
             String correo = txtRegCorreo.getText().trim().toLowerCase();
             String telefono = txtRegTelefono.getText().trim();
 
-            // 1. Validar campos obligatorios
             if (nombre.isEmpty() || apellidoP.isEmpty() || clave.isEmpty() || correo.isEmpty()) {
                 mostrarAlerta("Campos incompletos", "Por favor completa Nombre, Apellido paterno, Contraseña y Correo.");
                 return;
             }
 
-            // 2. Determinar el puesto utilizando el método auxiliar
-            String puesto = determinarPuesto(correo);
-
-            // Si el correo no coincide con ningún dominio válido, determinarPuesto retorna null
-            if (puesto == null) {
+            if (!telefono.isEmpty() && !esTelefonoValido(telefono)) {
+                mostrarAlerta("Teléfono inválido", "El número de teléfono debe tener exactamente 10 dígitos numéricos.");
                 return;
             }
 
-            // 3. Crear el objeto Empleado con el puesto asignado
+            String puesto = determinarPuesto(correo);
+            if (puesto == null) return;
+
             Empleado nuevoEmp = new Empleado(0, nombre, apellidoP, apellidoM, clave, correo, telefono, puesto);
 
-            // 4. Guardar en la base de datos
             if (empleadoDAO.insertar(nuevoEmp)) {
                 mostrarAlertaInfo("Éxito", "Empleado registrado correctamente como " + puesto + ".");
                 navInicioSesion(event);
@@ -900,6 +905,11 @@
 
             if (nombre.isEmpty() || apellidoP.isEmpty() || clave.isEmpty() || correo.isEmpty()) {
                 mostrarAlerta("Campos vacíos", "Nombre, Apellido Paterno, Contraseña y Correo no pueden estar vacíos.");
+                return;
+            }
+
+            if (!telefono.isEmpty() && !esTelefonoValido(telefono)) {
+                mostrarAlerta("Teléfono inválido", "El número de teléfono debe tener exactamente 10 dígitos numéricos.");
                 return;
             }
 
@@ -1467,6 +1477,11 @@
             String rfc = (txtCliRFC != null) ? txtCliRFC.getText().trim() : "";
             String telefono = txtCliTelefono.getText().trim();
 
+            if (!esTelefonoValido(telefono)) {
+                mostrarAlerta("Teléfono inválido", "El número de teléfono debe tener exactamente 10 dígitos numéricos.");
+                return;
+            }
+
             Cliente nuevoCliente = new Cliente(0, nombre, direccion, rfc, telefono);
 
             if (clienteDAO.insertar(nuevoCliente)) {
@@ -1480,6 +1495,7 @@
                 mostrarAlerta("Error", "No se pudo guardar el cliente en la base de datos.");
             }
         }
+
         @FXML
         public void eliminarCliente() {
             // 1. Validar que exista un producto seleccionado en la tabla
@@ -1514,7 +1530,7 @@
                 mostrarAlerta("Fallo al actualizar", "No ha seleccionado ningún cliente de la tabla.");
                 return;
             }
-            // Todo se muestra dentro de un dialog (que es una ventana emergente que nos permite ingresar campos, esto no se puede editar en SceneBuilder, es únicamente código.
+
             Dialog<ButtonType> dialog = new Dialog<>();
             dialog.setTitle("Actualizar Cliente");
             dialog.setHeaderText("Editar información para: " + clienteSeleccionado.getNombre());
@@ -1523,7 +1539,6 @@
             ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
             dialog.getDialogPane().getButtonTypes().addAll(btnGuardar, btnCancelar);
 
-            // Campos de texto precargados
             TextField txtEditNombre = new TextField(clienteSeleccionado.getNombre());
             TextField txtEditDireccion = new TextField(clienteSeleccionado.getDireccion());
             TextField txtEditRfc = new TextField(clienteSeleccionado.getRfc());
@@ -1552,24 +1567,25 @@
                 String rfc = txtEditRfc.getText().trim();
                 String telefono = txtEditTelefono.getText().trim();
 
-                // Validar que no dejen campos vacíos
-                if (nombre.isEmpty() || direccion.isEmpty() || rfc.isEmpty() || telefono == null) {
+                if (nombre.isEmpty() || direccion.isEmpty() || rfc.isEmpty() || telefono.isEmpty()) {
                     mostrarAlerta("Campos incompletos", "Por favor completa todos los campos.");
                     return;
                 }
 
+                if (!esTelefonoValido(telefono)) {
+                    mostrarAlerta("Teléfono inválido", "El número de teléfono debe tener exactamente 10 dígitos numéricos.");
+                    return;
+                }
+
                 try {
-                    // Creamos el objeto del cliente actualizado
                     Cliente clienteActualizado = new Cliente(clienteSeleccionado.getCodigo(), nombre, direccion, rfc, telefono);
 
-                    // Guardamos mediante el DAO
                     if (clienteDAO.actualizar(clienteActualizado)) {
                         mostrarAlertaInfo("Éxito", "Cliente actualizado correctamente.");
-                        cargarClientesBD(); // Recarga la tabla de JavaFX
+                        cargarClientesBD();
                     } else {
                         mostrarAlerta("Error", "No se pudo actualizar el cliente en la base de datos.");
                     }
-
                 } catch (Exception e) {
                     mostrarAlerta("Error", "Hubo un error al actualizar el cliente, revise bien los campos y vuelva a intentarlo.");
                 }

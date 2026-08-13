@@ -1,0 +1,50 @@
+-- 1. Tablas primarias (sin llaves foráneas)
+
+-- Inserciones para PRODUCTO (codigo, nombre, existencia, precioVenta, estado)
+INSERT INTO PRODUCTO (codigo, nombre, existencia, precioVenta, estado) VALUES
+('PROD001', 'Paracetamol 500mg', 100, 25.50, 'Disponible'),
+('PROD002', 'Ibuprofeno 400mg', 85, 38.00, 'Disponible'),
+('PROD003', 'Amoxicilina 500mg', 45, 120.00, 'Disponible'),
+('PROD004', 'Omeprazol 20mg', 60, 89.90, 'Disponible'),
+('PROD005', 'Loratadina 10mg', 30, 45.00, 'Disponible');
+
+-- Inserciones para CLIENTE (codigo, nombre, telefono, RFC, direccion)
+INSERT INTO CLIENTE (codigo, nombre, telefono, RFC, direccion) VALUES
+('CLI001', 'Juan Pérez Gómez', '5551234567', 'PEGJ800101HA1', 'Av. Hidalgo 123, Centro'),
+('CLI002', 'María López Hernández', '5559876543', 'LOHM920512KL8', 'Calle Juárez 456, Col. Juárez'),
+('CLI003', 'Público General', '0000000000', 'XAXX010101000', 'Mostrador');
+
+-- Inserciones para EMPLEADO (idEmpleado, nombre, apellidoPaterno, apellidoMaterno, contraseña, correo, telefono, puesto)
+-- Nota: Los correos usan los dominios @admin.com, @caja.com y @almacen.com acordes a la lógica del sistema
+INSERT INTO EMPLEADO (idEmpleado, nombre, apellidoPaterno, apellidoMaterno, contraseña, correo, telefono, puesto) VALUES
+(1, 'Carlos', 'Vargas', 'Pérez', 'admin123', 'carlos@admin.com', '3311223344', 'Administrador'),
+(2, 'Bryan', 'Loza', 'Guzmán', 'back123', 'bryan@almacen.com', '3322334455', 'Almacenista'),
+(3, 'Angie', 'Ramírez', 'Díaz', 'caja123', 'angie@caja.com', '3333445566', 'Cajero'),
+(4, 'Mauricio', 'Hernández', 'Rodríguez', 'front123', 'mauricio@caja.com', '3344556677', 'Cajero');
+
+-- 2. Tablas secundarias (dependen de entidades primarias)
+
+-- Inserciones para VENTA (numeroNota, fecha, totalPagar, codigoCliente, idEmpleado)
+INSERT INTO VENTA (numeroNota, fecha, totalPagar, codigoCliente, idEmpleado) VALUES
+(1001, '2026-08-10 10:30:00', 89.00, 'CLI001', 3),
+(1002, '2026-08-10 11:15:00', 120.00, 'CLI002', 4),
+(1003, '2026-08-11 09:00:00', 89.90, 'CLI003', 3);
+
+-- Inserciones para ABASTECIMIENTO (idAbastecimiento, fecha, cantidadIngresada, codigoArticulo, idEmpleado)
+INSERT INTO ABASTECIMIENTO (idAbastecimiento, fecha, cantidadIngresada, codigoArticulo, idEmpleado) VALUES
+(5001, '2026-08-01 08:00:00', 50, 'PROD001', 2),
+(5002, '2026-08-01 08:30:00', 30, 'PROD003', 2);
+
+-- 3. Tablas relacionales y de detalle (llaves compuestas / asociativas)
+
+-- Inserciones para CONTIENE (numeroNota, codigoArticulo, cantidadSalida, precioVenta)
+INSERT INTO CONTIENE (numeroNota, codigoArticulo, cantidadSalida, precioVenta) VALUES
+(1001, 'PROD001', 2, 25.50),
+(1001, 'PROD002', 1, 38.00),
+(1002, 'PROD003', 1, 120.00),
+(1003, 'PROD004', 1, 89.90);
+
+-- Inserciones para GENERA (idAbastecimiento, codigoArticulo)
+INSERT INTO GENERA (idAbastecimiento, codigoArticulo) VALUES
+(5001, 'PROD001'),
+(5002, 'PROD003');
