@@ -367,7 +367,7 @@
             String correoLower = correo.toLowerCase();
 
             if (correoLower.endsWith("@admin.com")) {
-                return "Admin";
+                return "Administrador";
             } else if (correoLower.endsWith("@caja.com")) {
                 return "Cajero";
             } else if (correoLower.endsWith("@almacen.com")) {
@@ -382,7 +382,7 @@
         public void aplicarPermisos(String puesto) {
             if (puesto == null) return;
 
-            boolean esAdmin = puesto.equalsIgnoreCase("Admin");
+            boolean esAdmin = puesto.equalsIgnoreCase("Administrador");
             boolean esCajero = puesto.equalsIgnoreCase("Cajero");
             boolean esAlmacenista = puesto.equalsIgnoreCase("Almacenista");
 

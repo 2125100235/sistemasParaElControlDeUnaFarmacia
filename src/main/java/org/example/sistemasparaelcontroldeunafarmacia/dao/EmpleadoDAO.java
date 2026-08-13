@@ -59,7 +59,7 @@ public class EmpleadoDAO {
     }
 
     public boolean verificarAdministrador(String correo, String clave) {
-        String sql = "SELECT * FROM empleado WHERE correo = ? AND clave = ? AND puesto = 'Admin'";
+        String sql = "SELECT * FROM empleado WHERE correo = ? AND clave = ? AND puesto = 'Admin' or puesto = 'Administrador'";
         try (Connection cn = ConexionBD.getInstancia().getConexion();
              PreparedStatement ps = cn.prepareStatement(sql)) {
 

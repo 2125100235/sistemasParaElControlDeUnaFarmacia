@@ -38,7 +38,7 @@
                   <Font size="10.0" />
                </font>
             </Button>
-            <Button fx:id="btnRegistrarse" mnemonicParsing="false" onMouseClicked="#navRestablecer" prefHeight="71.0" prefWidth="266.0" styleClass="botonAzulGrande" text="REGISTRARSE" textAlignment="CENTER">
+            <Button fx:id="btnRegistrarse" mnemonicParsing="false" onMouseClicked="#navAutorizacionAdministrador" prefHeight="71.0" prefWidth="266.0" styleClass="botonAzulGrande" text="REGISTRARSE" textAlignment="CENTER">
                <font>
                   <Font size="10.0" />
                </font>

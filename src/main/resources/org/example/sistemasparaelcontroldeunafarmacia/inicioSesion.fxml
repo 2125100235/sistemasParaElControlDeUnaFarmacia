@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -94,6 +95,12 @@
       </VBox>
       <HBox alignment="BOTTOM_RIGHT" prefHeight="108.0" prefWidth="960.0">
          <children>
+            <Button fx:id="btnRegresarInicio" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#navInicio" prefHeight="39.0" prefWidth="119.0" styleClass="botonNormal" text="Regresar" textAlignment="CENTER">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+            <Region prefHeight="59.0" prefWidth="669.0" />
             <ImageView fitHeight="59.0" fitWidth="249.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../images/Logo_LogimedTech_Horizontal.png" />
